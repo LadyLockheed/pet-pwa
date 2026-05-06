@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844">
+  <rect width="390" height="844" fill="#f8f5ef"/>
+  <text x="28" y="84" fill="#182426" font-family="Arial, sans-serif" font-size="44" font-weight="700">Pet Journal</text>
+  <text x="30" y="128" fill="#59636b" font-family="Arial, sans-serif" font-size="17">Local pet profiles and health notes.</text>
+  <rect x="24" y="174" width="342" height="180" rx="14" fill="#ffffff"/>
+  <circle cx="88" cy="244" r="38" fill="#2f6f73"/>
+  <text x="144" y="236" fill="#182426" font-family="Arial, sans-serif" font-size="26" font-weight="700">Milo</text>
+  <text x="144" y="270" fill="#59636b" font-family="Arial, sans-serif" font-size="17">Dog · Labrador mix</text>
+  <rect x="24" y="382" width="342" height="180" rx="14" fill="#ffffff"/>
+  <circle cx="88" cy="452" r="38" fill="#2f6f73"/>
+  <text x="144" y="444" fill="#182426" font-family="Arial, sans-serif" font-size="26" font-weight="700">Luna</text>
+  <text x="144" y="478" fill="#59636b" font-family="Arial, sans-serif" font-size="17">Cat · Domestic shorthair</text>
+</svg>

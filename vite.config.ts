@@ -8,7 +8,12 @@ export default defineConfig({
 		react(),
 		VitePWA({
 			registerType: 'autoUpdate',
-			includeAssets: ['favicon.svg', 'pwa-icon.svg'],
+			includeAssets: [
+				'favicon.svg',
+				'pwa-icon.svg',
+				'screenshots/pet-journal-wide.svg',
+				'screenshots/pet-journal-mobile.svg',
+			],
 			manifest: {
 				name: 'Pet Journal',
 				short_name: 'Pet Journal',
@@ -22,9 +27,22 @@ export default defineConfig({
 				icons: [
 					{
 						src: '/pwa-icon.svg',
-						sizes: 'any',
+						sizes: '512x512',
 						type: 'image/svg+xml',
 						purpose: 'any maskable',
+					},
+				],
+				screenshots: [
+					{
+						src: '/screenshots/pet-journal-wide.svg',
+						sizes: '1280x720',
+						type: 'image/svg+xml',
+						form_factor: 'wide',
+					},
+					{
+						src: '/screenshots/pet-journal-mobile.svg',
+						sizes: '390x844',
+						type: 'image/svg+xml',
 					},
 				],
 			},
