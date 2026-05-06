@@ -11,8 +11,9 @@ export default defineConfig({
 			includeAssets: [
 				'favicon.svg',
 				'pwa-icon.svg',
-				'screenshots/pet-journal-wide.svg',
-				'screenshots/pet-journal-mobile.svg',
+				'pwa-icon-512.png',
+				'screenshots/pet-journal-wide.png',
+				'screenshots/pet-journal-mobile.png',
 			],
 			manifest: {
 				name: 'Pet Journal',
@@ -26,23 +27,23 @@ export default defineConfig({
 				scope: '/',
 				icons: [
 					{
-						src: '/pwa-icon.svg',
+						src: '/pwa-icon-512.png',
 						sizes: '512x512',
-						type: 'image/svg+xml',
+						type: 'image/png',
 						purpose: 'any maskable',
 					},
 				],
 				screenshots: [
 					{
-						src: '/screenshots/pet-journal-wide.svg',
+						src: '/screenshots/pet-journal-wide.png',
 						sizes: '1280x720',
-						type: 'image/svg+xml',
+						type: 'image/png',
 						form_factor: 'wide',
 					},
 					{
-						src: '/screenshots/pet-journal-mobile.svg',
+						src: '/screenshots/pet-journal-mobile.png',
 						sizes: '390x844',
-						type: 'image/svg+xml',
+						type: 'image/png',
 					},
 				],
 			},
