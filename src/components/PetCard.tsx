@@ -1,38 +1,32 @@
 import styled from 'styled-components';
 import type { Pet } from '../db';
 
-interface PetProfileProps {
+interface PetCardProps {
 	pet: Pet;
 }
 
-export default function PetProfile({ pet }: PetProfileProps) {
+export default function PetCard({ pet }: PetCardProps) {
 	const petDetails = [
 		['Breed', pet.breed],
 		['Age', pet.age],
 	];
 
 	return (
-		<Profile>
-			<Card>
-				<div style={{ display: 'flex', flexDirection: 'column' }}>
-					<Name>{pet.name}</Name>
-					<PicturePlaceholder />
-				</div>
-				<DetailsList>
-					{petDetails.map(([label, value]) => (
-						<li key={label}>
-							<strong>{label}:</strong> {value}
-						</li>
-					))}
-				</DetailsList>
-			</Card>
-		</Profile>
+		<Card>
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
+				<Name>{pet.name}</Name>
+				<PicturePlaceholder />
+			</div>
+			<DetailsList>
+				{petDetails.map(([label, value]) => (
+					<li key={label}>
+						<strong>{label}:</strong> {value}
+					</li>
+				))}
+			</DetailsList>
+		</Card>
 	);
 }
-
-const Profile = styled.section({
-	margin: '24px',
-});
 
 const Name = styled.h1({
 	margin: '0 0 16px',
