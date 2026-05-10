@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import AddPetForm from './components/AddPetForm';
 import PetsOverview from './components/PetsOverview';
 import { petType, type Pet } from './db';
+import About from './components/About';
 
 //TODO byt ut age till födelsedag och visa ålder utifrån den istället
 const pets: Pet[] = [
@@ -34,6 +35,7 @@ function App() {
 					<Route path="/" element={<PetsOverview pets={pets} />} />
 					<Route path="/add-pet" element={<AddPetForm />} />
 					<Route path="/pets-overview" element={<Navigate to="/" replace />} />
+					<Route path="/about" element={<About />} />
 				</Routes>
 			</Layout>
 		</BrowserRouter>

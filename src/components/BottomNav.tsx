@@ -13,6 +13,10 @@ const navItems: Array<{
 		label: 'Add pet',
 		to: '/add-pet',
 	},
+	{
+		label: 'About',
+		to: '/about',
+	},
 ];
 
 export default function BottomNav() {
@@ -20,11 +24,7 @@ export default function BottomNav() {
 		<Nav aria-label="Primary navigation">
 			<NavInner>
 				{navItems.map((item) => (
-					<NavLink
-						key={item.to}
-						to={item.to}
-						end={item.to === '/'}
-					>
+					<NavLink key={item.to} to={item.to} end={item.to === '/'}>
 						{item.label}
 					</NavLink>
 				))}
@@ -49,8 +49,8 @@ const Nav = styled.nav({
 
 const NavInner = styled.div({
 	display: 'grid',
-	gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-	gap: '8px',
+	gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+	gap: '4px',
 	width: '100%',
 	maxWidth: '420px',
 });
