@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { petType, type Pet, type PetSpecies } from '../db';
 
 interface AddPetFormProps {
-	onAddPet: (pet: Pet) => void;
+	onAddPet: (pet: Pet) => Promise<void>;
 }
 
 export default function AddPetForm({ onAddPet }: AddPetFormProps) {
@@ -14,12 +14,12 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 	const [species, setSpecies] = useState<PetSpecies>(petType.dog);
 	const [age, setAge] = useState('');
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		const now = new Date().toISOString();
 
-		onAddPet({
+		await onAddPet({
 			id: crypto.randomUUID(),
 			name: name.trim(),
 			species,

@@ -4,7 +4,7 @@ import type { Pet } from '../db';
 
 interface PetDetailsProps {
 	pets: Pet[];
-	onDeletePet: (petId: string) => void;
+	onDeletePet: (petId: string) => Promise<void>;
 }
 
 export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
@@ -28,14 +28,14 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 
 	const selectedPet = pet;
 
-	function handleDelete() {
+	async function handleDelete() {
 		const shouldDelete = window.confirm(`Delete ${selectedPet.name}?`);
 
 		if (!shouldDelete) {
 			return;
 		}
 
-		onDeletePet(selectedPet.id);
+		await onDeletePet(selectedPet.id);
 		navigate('/');
 	}
 

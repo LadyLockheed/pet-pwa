@@ -7,6 +7,9 @@ interface PetsOverviewProps {
 }
 
 export default function PetsOverview({ pets }: PetsOverviewProps) {
+	if (pets.length === 0) {
+		return <div>Du har inte lagt in några djur än</div>;
+	}
 	return (
 		<Overview>
 			{pets.map((pet) => (

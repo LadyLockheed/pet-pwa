@@ -68,11 +68,11 @@ async function withPetStore<T>(
 	});
 }
 
-// Reads every saved pet and returns the newest updated records first.
+// Reads every saved pet and returns the oldest records first.
 export async function getPets(): Promise<Pet[]> {
 	const pets = await withPetStore<Pet[]>('readonly', (store) => store.getAll());
 
-	return pets.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+	return pets.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
 
 // Adds a new pet or replaces an existing pet with the same id.

@@ -1,45 +1,52 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from './components/Layout';
 import AddPetForm from './components/AddPetForm';
 import PetsOverview from './components/PetsOverview';
-import { petType, type Pet } from './db';
+import {
+	deletePet as deletePetFromDb,
+	getPets,
+	savePet,
+	type Pet,
+} from './db';
 import About from './components/About';
 import PetDetails from './components/PetDetails';
 
 //TODO byt ut age till födelsedag och visa ålder utifrån den istället
+//TODO Gå igenom alla componetnter och städa upp
 
-const initialPets: Pet[] = [
-	{
-		id: '1',
-		name: 'Nora',
-		species: petType.dog,
-		breed: 'Bichon Havanais',
-		age: 4,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
-	},
-	{
-		id: '2',
-		name: 'Tilda',
-		species: petType.dog,
-		breed: 'Bichon Havanais',
-		age: 1,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
-	},
-];
+//TODO Lägg till en "INGA PETS ÄNNU" vy
 
 function App() {
-	const [pets, setPets] = useState(initialPets);
+	const [pets, setPets] = useState<Pet[]>([]);
 
-	function handleDeletePet(petId: string) {
+	useEffect(() => {
+		let ignoreResult = false;
+
+		async function loadPets() {
+			const storedPets = await getPets();
+
+			if (!ignoreResult) {
+				setPets(storedPets);
+			}
+		}
+
+		loadPets();
+
+		return () => {
+			ignoreResult = true;
+		};
+	}, []);
+
+	async function handleDeletePet(petId: string) {
+		await deletePetFromDb(petId);
 		setPets((currentPets) =>
 			currentPets.filter((currentPet) => currentPet.id !== petId),
 		);
 	}
 
-	function handleAddPet(pet: Pet) {
+	async function handleAddPet(pet: Pet) {
+		await savePet(pet);
 		setPets((currentPets) => [...currentPets, pet]);
 	}
 
