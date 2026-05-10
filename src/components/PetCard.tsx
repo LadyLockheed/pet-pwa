@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import type { Pet } from '../db';
 
 interface PetCardProps {
@@ -12,11 +13,11 @@ export default function PetCard({ pet }: PetCardProps) {
 	];
 
 	return (
-		<Card>
-			<div style={{ display: 'flex', flexDirection: 'column' }}>
+		<CardLink to={`/pets/${pet.id}`}>
+			<PetMedia>
 				<Name>{pet.name}</Name>
 				<PicturePlaceholder />
-			</div>
+			</PetMedia>
 			<DetailsList>
 				{petDetails.map(([label, value]) => (
 					<li key={label}>
@@ -24,7 +25,7 @@ export default function PetCard({ pet }: PetCardProps) {
 					</li>
 				))}
 			</DetailsList>
-		</Card>
+		</CardLink>
 	);
 }
 
@@ -34,11 +35,20 @@ const Name = styled.h1({
 	textAlign: 'center',
 });
 
-const Card = styled.article({
+const CardLink = styled(Link)({
+	display: 'block',
 	padding: '24px',
 	border: '1px solid #d7c7f2',
 	borderRadius: '8px',
 	backgroundColor: '#ffffff',
+	color: 'inherit',
+	textDecoration: 'none',
+});
+
+const PetMedia = styled.div({
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
 });
 
 const PicturePlaceholder = styled.div({
