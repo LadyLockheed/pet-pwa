@@ -1,25 +1,42 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Pet } from '../db';
 
 interface PetDetailsProps {
 	pets: Pet[];
+	onDeletePet: (petId: string) => void;
 }
 
-export default function PetDetails({ pets }: PetDetailsProps) {
+export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 	const { petId } = useParams();
+	const navigate = useNavigate();
 	const pet = pets.find((currentPet) => currentPet.id === petId);
 
 	if (!pet) {
 		return (
 			<Details>
-				<BackButton to="/" aria-label="Back to pets overview">
-					←
-				</BackButton>
+				<TopActions>
+					<BackButton to="/" aria-label="Back to pets overview">
+						&larr;
+					</BackButton>
+				</TopActions>
 				<h1>Pet not found</h1>
 				<Link to="/">Back to pets</Link>
 			</Details>
 		);
+	}
+
+	const selectedPet = pet;
+
+	function handleDelete() {
+		const shouldDelete = window.confirm(`Delete ${selectedPet.name}?`);
+
+		if (!shouldDelete) {
+			return;
+		}
+
+		onDeletePet(selectedPet.id);
+		navigate('/');
 	}
 
 	const petDetails = [
@@ -29,9 +46,14 @@ export default function PetDetails({ pets }: PetDetailsProps) {
 
 	return (
 		<Details>
-			<BackButton to="/" aria-label="Back to pets overview">
-				←
-			</BackButton>
+			<TopActions>
+				<BackButton to="/" aria-label="Back to pets overview">
+					&larr;
+				</BackButton>
+				<DeleteButton type="button" onClick={handleDelete}>
+					Delete
+				</DeleteButton>
+			</TopActions>
 			<h1>{pet.name}</h1>
 			<PicturePlaceholder />
 			<InfoList>
@@ -55,8 +77,14 @@ const Details = styled.section({
 	padding: '24px',
 });
 
+const TopActions = styled.div({
+	display: 'flex',
+	justifyContent: 'space-between',
+	alignItems: 'center',
+	width: '100%',
+});
+
 const BackButton = styled(Link)({
-	justifySelf: 'start',
 	display: 'grid',
 	width: '40px',
 	height: '40px',
@@ -67,6 +95,17 @@ const BackButton = styled(Link)({
 	fontSize: '1.5rem',
 	fontWeight: 800,
 	textDecoration: 'none',
+});
+
+const DeleteButton = styled.button({
+	border: 0,
+	borderRadius: '8px',
+	backgroundColor: '#8a3d3d',
+	color: '#ffffff',
+	cursor: 'pointer',
+	font: 'inherit',
+	fontWeight: 800,
+	padding: '10px 14px',
 });
 
 const PicturePlaceholder = styled.div({

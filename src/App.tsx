@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useState } from 'react';
 import Layout from './components/Layout';
 import AddPetForm from './components/AddPetForm';
 import PetsOverview from './components/PetsOverview';
@@ -7,7 +8,8 @@ import About from './components/About';
 import PetDetails from './components/PetDetails';
 
 //TODO byt ut age till födelsedag och visa ålder utifrån den istället
-const pets: Pet[] = [
+
+const initialPets: Pet[] = [
 	{
 		id: '1',
 		name: 'Nora',
@@ -29,15 +31,33 @@ const pets: Pet[] = [
 ];
 
 function App() {
+	const [pets, setPets] = useState(initialPets);
+
+	function handleDeletePet(petId: string) {
+		setPets((currentPets) =>
+			currentPets.filter((currentPet) => currentPet.id !== petId),
+		);
+	}
+
+	function handleAddPet(pet: Pet) {
+		setPets((currentPets) => [...currentPets, pet]);
+	}
+
 	return (
 		<BrowserRouter>
 			<Layout>
 				<Routes>
 					<Route path="/" element={<PetsOverview pets={pets} />} />
-					<Route path="/add-pet" element={<AddPetForm />} />
+					<Route
+						path="/add-pet"
+						element={<AddPetForm onAddPet={handleAddPet} />}
+					/>
 					<Route path="/pets-overview" element={<Navigate to="/" replace />} />
 					<Route path="/about" element={<About />} />
-					<Route path="/pets/:petId" element={<PetDetails pets={pets} />} />
+					<Route
+						path="/pets/:petId"
+						element={<PetDetails pets={pets} onDeletePet={handleDeletePet} />}
+					/>
 				</Routes>
 			</Layout>
 		</BrowserRouter>

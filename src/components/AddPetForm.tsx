@@ -1,20 +1,45 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { petType, type PetSpecies } from '../db';
+import { petType, type Pet, type PetSpecies } from '../db';
 
-export default function AddPetForm() {
+interface AddPetFormProps {
+	onAddPet: (pet: Pet) => void;
+}
+
+export default function AddPetForm({ onAddPet }: AddPetFormProps) {
+	const navigate = useNavigate();
 	const [name, setName] = useState('');
 	const [breed, setBreed] = useState('');
 	const [species, setSpecies] = useState<PetSpecies>(petType.dog);
 	const [age, setAge] = useState('');
 
+	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		const now = new Date().toISOString();
+
+		onAddPet({
+			id: crypto.randomUUID(),
+			name: name.trim(),
+			species,
+			breed: breed.trim(),
+			age: Number(age),
+			createdAt: now,
+			updatedAt: now,
+		});
+
+		navigate('/');
+	}
+
 	return (
-		<Form>
+		<Form onSubmit={handleSubmit}>
 			<Field>
 				<span>Name</span>
 				<input
 					type="text"
 					value={name}
+					required
 					onChange={(event) => setName(event.target.value)}
 				/>
 			</Field>
@@ -24,6 +49,7 @@ export default function AddPetForm() {
 				<input
 					type="text"
 					value={breed}
+					required
 					onChange={(event) => setBreed(event.target.value)}
 				/>
 			</Field>
@@ -58,9 +84,12 @@ export default function AddPetForm() {
 					type="number"
 					min="0"
 					value={age}
+					required
 					onChange={(event) => setAge(event.target.value)}
 				/>
 			</Field>
+
+			<SubmitButton type="submit">Add pet</SubmitButton>
 		</Form>
 	);
 }
@@ -91,4 +120,15 @@ const RadioOption = styled.label({
 	alignItems: 'center',
 	gap: '6px',
 	fontWeight: 700,
+});
+
+const SubmitButton = styled.button({
+	border: 0,
+	borderRadius: '8px',
+	backgroundColor: '#2f6f73',
+	color: '#ffffff',
+	cursor: 'pointer',
+	font: 'inherit',
+	fontWeight: 800,
+	padding: '12px 16px',
 });
