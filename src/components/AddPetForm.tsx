@@ -40,7 +40,9 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 		navigate('/');
 	}
 
-	async function handlePictureChange(event: React.ChangeEvent<HTMLInputElement>) {
+	async function handlePictureChange(
+		event: React.ChangeEvent<HTMLInputElement>,
+	) {
 		const file = event.target.files?.[0];
 		setPictureError('');
 
@@ -112,7 +114,9 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 				<input type="file" accept="image/*" onChange={handlePictureChange} />
 			</Field>
 
-			{isProcessingPicture ? <PictureStatus>Preparing picture...</PictureStatus> : null}
+			{isProcessingPicture ? (
+				<PictureStatus>Preparing picture...</PictureStatus>
+			) : null}
 
 			{pictureError ? <ErrorMessage>{pictureError}</ErrorMessage> : null}
 
