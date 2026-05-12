@@ -16,7 +16,11 @@ export default function PetCard({ pet }: PetCardProps) {
 		<CardLink to={`/pets/${pet.id}`}>
 			<PetMedia>
 				<Name>{pet.name}</Name>
-				<PicturePlaceholder />
+				{pet.pictureUrl ? (
+					<PetPicture src={pet.pictureUrl} alt={pet.name} />
+				) : (
+					<PicturePlaceholder />
+				)}
 			</PetMedia>
 			<DetailsList>
 				{petDetails.map(([label, value]) => (
@@ -58,6 +62,13 @@ const PicturePlaceholder = styled.div({
 	border: '2px dashed #b9a1df',
 	borderRadius: '8px',
 	backgroundColor: '#f7f2ff',
+});
+
+const PetPicture = styled.img({
+	width: '180px',
+	aspectRatio: '1',
+	borderRadius: '8px',
+	objectFit: 'cover',
 });
 
 const DetailsList = styled.ul({

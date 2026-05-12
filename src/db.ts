@@ -13,9 +13,9 @@ export type Pet = {
 	species: PetSpecies;
 	breed: string;
 	age: number;
+	pictureUrl?: string;
 	// medicalHistory: string These will be included in the future
 	// heatPeriods: string // This need to be of type Date and selected from a calendar
-	//pictures: string[] // Include this in the future, probably not of type string
 	createdAt: string;
 	updatedAt: string;
 };

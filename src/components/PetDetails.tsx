@@ -55,7 +55,11 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 				</DeleteButton>
 			</TopActions>
 			<h1>{pet.name}</h1>
-			<PicturePlaceholder />
+			{pet.pictureUrl ? (
+				<PetPicture src={pet.pictureUrl} alt={pet.name} />
+			) : (
+				<PicturePlaceholder />
+			)}
 			<InfoList>
 				{petDetails.map(([label, value]) => (
 					<li key={label}>
@@ -114,6 +118,13 @@ const PicturePlaceholder = styled.div({
 	border: '2px dashed #b9a1df',
 	borderRadius: '8px',
 	backgroundColor: '#f7f2ff',
+});
+
+const PetPicture = styled.img({
+	width: '220px',
+	aspectRatio: '1',
+	borderRadius: '8px',
+	objectFit: 'cover',
 });
 
 const InfoList = styled.ul({
