@@ -25,5 +25,4 @@ const Overview = styled.section({
 	width: '100%',
 	maxWidth: '720px',
 	boxSizing: 'border-box',
-	padding: '24px',
 });

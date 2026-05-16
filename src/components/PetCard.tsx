@@ -8,41 +8,37 @@ interface PetCardProps {
 }
 
 export default function PetCard({ pet }: PetCardProps) {
-	const petDetails = [
-		['Breed', pet.breed],
-		['Age', formatAgeFromDateOfBirth(pet.dateOfBirth)],
-	];
-
 	return (
 		<CardLink to={`/pets/${pet.id}`}>
-			<PetMedia>
+			{pet.pictureUrl ? (
+				<PetPicture src={pet.pictureUrl} alt={pet.name} />
+			) : (
+				<PicturePlaceholder />
+			)}
+			<PetInfo>
 				<Name>{pet.name}</Name>
-				{pet.pictureUrl ? (
-					<PetPicture src={pet.pictureUrl} alt={pet.name} />
-				) : (
-					<PicturePlaceholder />
-				)}
-			</PetMedia>
-			<DetailsList>
-				{petDetails.map(([label, value]) => (
-					<li key={label}>
-						<strong>{label}:</strong> {value}
-					</li>
-				))}
-			</DetailsList>
+				<MetaRow>
+					<span>{pet.breed}</span>
+					<span>{pet.sex ?? 'Unknown sex'}</span>
+				</MetaRow>
+				<Age>{formatAgeFromDateOfBirth(pet.dateOfBirth)}</Age>
+			</PetInfo>
 		</CardLink>
 	);
 }
 
 const Name = styled.h1({
-	margin: '0 0 16px',
-	fontSize: '2rem',
-	textAlign: 'center',
+	margin: 0,
+	fontSize: '1.5rem',
+	lineHeight: 1.1,
 });
 
 const CardLink = styled(Link)({
-	display: 'block',
-	padding: '24px',
+	display: 'grid',
+	gridTemplateColumns: '112px 1fr',
+	alignItems: 'center',
+	gap: '16px',
+	padding: '16px',
 	border: '1px solid #d7c7f2',
 	borderRadius: '8px',
 	backgroundColor: '#ffffff',
@@ -50,14 +46,8 @@ const CardLink = styled(Link)({
 	textDecoration: 'none',
 });
 
-const PetMedia = styled.div({
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-});
-
 const PicturePlaceholder = styled.div({
-	width: '180px',
+	width: '112px',
 	aspectRatio: '1',
 	flexShrink: 0,
 	border: '2px dashed #b9a1df',
@@ -66,14 +56,27 @@ const PicturePlaceholder = styled.div({
 });
 
 const PetPicture = styled.img({
-	width: '180px',
+	width: '112px',
 	aspectRatio: '1',
 	borderRadius: '8px',
 	objectFit: 'cover',
 });
 
-const DetailsList = styled.ul({
+const PetInfo = styled.div({
+	display: 'grid',
+	gap: '8px',
+});
+
+const MetaRow = styled.div({
+	display: 'flex',
+	flexWrap: 'wrap',
+	gap: '8px',
+	color: '#59636b',
+	textTransform: 'capitalize',
+});
+
+const Age = styled.p({
 	margin: 0,
-	paddingLeft: '20px',
-	lineHeight: 1.8,
+	color: '#263133',
+	fontWeight: 700,
 });
