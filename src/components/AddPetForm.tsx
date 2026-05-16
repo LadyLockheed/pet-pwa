@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { petType, type Pet, type PetSpecies } from '../types/pet';
+import {
+	petType,
+	type Pet,
+	type PetHealth,
+	type PetMeasurements,
+	type PetSex,
+	type PetSpecies,
+	type PetBreederInfo,
+} from '../types/pet';
 
 const MAX_IMAGE_SIZE = 1024;
 const IMAGE_QUALITY = 0.8;
@@ -16,8 +24,17 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 	const [name, setName] = useState('');
 	const [breed, setBreed] = useState('');
 	const [species, setSpecies] = useState<PetSpecies>(petType.dog);
-	const [age, setAge] = useState('');
+	const [sex, setSex] = useState<PetSex>('female');
+	const [dateOfBirth, setDateOfBirth] = useState('');
 	const [pictureUrl, setPictureUrl] = useState<string>();
+	const [backLength, setBackLength] = useState('');
+	const [neckCircumference, setNeckCircumference] = useState('');
+	const [latestVaccinationDate, setLatestVaccinationDate] = useState('');
+	const [heatStartDate, setHeatStartDate] = useState('');
+	const [heatEndDate, setHeatEndDate] = useState('');
+	const [standingHeatDate, setStandingHeatDate] = useState('');
+	const [breederName, setBreederName] = useState('');
+	const [skkHunddataUrl, setSkkHunddataUrl] = useState('');
 	const [pictureError, setPictureError] = useState('');
 	const [isProcessingPicture, setIsProcessingPicture] = useState(false);
 
@@ -25,19 +42,72 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 		event.preventDefault();
 
 		const now = new Date().toISOString();
+		const measurements = getMeasurements();
+		const health = getHealth();
+		const breederInfo = getBreederInfo();
 
 		await onAddPet({
 			id: crypto.randomUUID(),
 			name: name.trim(),
+			sex,
 			species,
 			breed: breed.trim(),
-			age: Number(age),
+			dateOfBirth,
 			pictureUrl,
+			...(measurements ? { measurements } : {}),
+			...(health ? { health } : {}),
+			...(breederInfo ? { breederInfo } : {}),
 			createdAt: now,
 			updatedAt: now,
 		});
 
 		navigate('/');
+	}
+
+	function getMeasurements(): PetMeasurements | undefined {
+		const measurements: PetMeasurements = {};
+
+		if (backLength) {
+			measurements.backLength = Number(backLength);
+		}
+
+		if (neckCircumference) {
+			measurements.neckCircumference = Number(neckCircumference);
+		}
+
+		return Object.keys(measurements).length > 0 ? measurements : undefined;
+	}
+
+	function getHealth(): PetHealth | undefined {
+		const health: PetHealth = {};
+
+		if (latestVaccinationDate) {
+			health.latestVaccinationDate = latestVaccinationDate;
+		}
+
+		if (heatStartDate || heatEndDate || standingHeatDate) {
+			health.heatCycle = {
+				...(heatStartDate ? { startDate: heatStartDate } : {}),
+				...(heatEndDate ? { endDate: heatEndDate } : {}),
+				...(standingHeatDate ? { standingHeatDate } : {}),
+			};
+		}
+
+		return Object.keys(health).length > 0 ? health : undefined;
+	}
+
+	function getBreederInfo(): PetBreederInfo | undefined {
+		const breederInfo: PetBreederInfo = {};
+
+		if (breederName.trim()) {
+			breederInfo.breederName = breederName.trim();
+		}
+
+		if (skkHunddataUrl.trim()) {
+			breederInfo.skkHunddataUrl = skkHunddataUrl.trim();
+		}
+
+		return Object.keys(breederInfo).length > 0 ? breederInfo : undefined;
 	}
 
 	async function handlePictureChange(
@@ -145,6 +215,30 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 			</Field>
 
 			<Fieldset>
+				<legend>Sex</legend>
+				<RadioOption>
+					<input
+						type="radio"
+						name="sex"
+						value="female"
+						checked={sex === 'female'}
+						onChange={() => setSex('female')}
+					/>
+					Female
+				</RadioOption>
+				<RadioOption>
+					<input
+						type="radio"
+						name="sex"
+						value="male"
+						checked={sex === 'male'}
+						onChange={() => setSex('male')}
+					/>
+					Male
+				</RadioOption>
+			</Fieldset>
+
+			<Fieldset>
 				<legend>Species</legend>
 				<RadioOption>
 					<input
@@ -169,15 +263,102 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 			</Fieldset>
 
 			<Field>
-				<span>Age</span>
+				<span>Date of birth</span>
 				<input
-					type="number"
-					min="0"
-					value={age}
+					type="date"
+					max={new Date().toISOString().split('T')[0]}
+					value={dateOfBirth}
 					required
-					onChange={(event) => setAge(event.target.value)}
+					onChange={(event) => setDateOfBirth(event.target.value)}
 				/>
 			</Field>
+
+			<Section>
+				<summary>Measurements</summary>
+				<SectionContent>
+					<Field>
+						<span>Back length</span>
+						<input
+							type="number"
+							min="0"
+							inputMode="decimal"
+							value={backLength}
+							onChange={(event) => setBackLength(event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Neck circumference</span>
+						<input
+							type="number"
+							min="0"
+							inputMode="decimal"
+							value={neckCircumference}
+							onChange={(event) => setNeckCircumference(event.target.value)}
+						/>
+					</Field>
+				</SectionContent>
+			</Section>
+
+			<Section>
+				<summary>Health</summary>
+				<SectionContent>
+					<Field>
+						<span>Latest vaccination date</span>
+						<input
+							type="date"
+							max={new Date().toISOString().split('T')[0]}
+							value={latestVaccinationDate}
+							onChange={(event) => setLatestVaccinationDate(event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Heat cycle start</span>
+						<input
+							type="date"
+							value={heatStartDate}
+							onChange={(event) => setHeatStartDate(event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Heat cycle end</span>
+						<input
+							type="date"
+							value={heatEndDate}
+							onChange={(event) => setHeatEndDate(event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Standing heat date</span>
+						<input
+							type="date"
+							value={standingHeatDate}
+							onChange={(event) => setStandingHeatDate(event.target.value)}
+						/>
+					</Field>
+				</SectionContent>
+			</Section>
+
+			<Section>
+				<summary>Breeder information</summary>
+				<SectionContent>
+					<Field>
+						<span>Breeder name</span>
+						<input
+							type="text"
+							value={breederName}
+							onChange={(event) => setBreederName(event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>SKK Hunddata link</span>
+						<input
+							type="url"
+							value={skkHunddataUrl}
+							onChange={(event) => setSkkHunddataUrl(event.target.value)}
+						/>
+					</Field>
+				</SectionContent>
+			</Section>
 
 			<SubmitButton type="submit" disabled={isProcessingPicture}>
 				Add pet
@@ -212,6 +393,21 @@ const RadioOption = styled.label({
 	alignItems: 'center',
 	gap: '6px',
 	fontWeight: 700,
+});
+
+const Section = styled.details({
+	borderTop: '1px solid #d7ded8',
+	paddingTop: '12px',
+	'& summary': {
+		cursor: 'pointer',
+		fontWeight: 800,
+	},
+});
+
+const SectionContent = styled.div({
+	display: 'grid',
+	gap: '16px',
+	paddingTop: '14px',
 });
 
 const PictureStatus = styled.p({

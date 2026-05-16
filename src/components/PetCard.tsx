@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import type { Pet } from '../types/pet';
+import { formatAgeFromDateOfBirth } from '../utils/petAge';
 
 interface PetCardProps {
 	pet: Pet;
@@ -9,7 +10,7 @@ interface PetCardProps {
 export default function PetCard({ pet }: PetCardProps) {
 	const petDetails = [
 		['Breed', pet.breed],
-		['Age', pet.age],
+		['Age', formatAgeFromDateOfBirth(pet.dateOfBirth)],
 	];
 
 	return (

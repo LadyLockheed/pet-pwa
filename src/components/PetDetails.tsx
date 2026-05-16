@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Pet } from '../types/pet';
+import { formatAgeFromDateOfBirth } from '../utils/petAge';
 
 interface PetDetailsProps {
 	pets: Pet[];
@@ -41,7 +42,8 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 
 	const petDetails = [
 		['Breed', pet.breed],
-		['Age', pet.age],
+		['Date of birth', pet.dateOfBirth || 'Unknown'],
+		['Age', formatAgeFromDateOfBirth(pet.dateOfBirth)],
 	];
 
 	return (

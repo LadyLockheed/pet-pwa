@@ -6,17 +6,42 @@ export const petType = {
 
 export type PetSpecies = (typeof petType)[keyof typeof petType];
 
+export type PetSex = 'female' | 'male';
+
+export type PetMeasurements = {
+	backLength?: number;
+	neckCircumference?: number;
+};
+
+export type HeatCycle = {
+	startDate?: string;
+	endDate?: string;
+	standingHeatDate?: string;
+};
+
+export type PetHealth = {
+	latestVaccinationDate?: string;
+	heatCycle?: HeatCycle;
+};
+
+export type PetBreederInfo = {
+	breederName?: string;
+	skkHunddataUrl?: string;
+};
+
 // The shape of one pet record as it will be stored in IndexedDB.
 export type Pet = {
 	id: string;
 	name: string;
-	// sex: 'female' | 'male';
+	sex?: PetSex;
 	species: PetSpecies;
 	breed: string;
-	age: number; //should be counted from birthaday
+	dateOfBirth: string;
 	pictureUrl?: string;
+	measurements?: PetMeasurements;
+	health?: PetHealth;
+	breederInfo?: PetBreederInfo;
 	// medicalHistory: string These will be included in the future
-	// heatPeriods: string // This need to be of type Date and selected from a calendar
 	createdAt: string;
 	updatedAt: string;
 };
