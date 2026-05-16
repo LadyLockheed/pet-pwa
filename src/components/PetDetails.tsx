@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Pet } from '../types/pet';
 import { formatAgeFromDateOfBirth } from '../utils/petAge';
+import BackButton from './BackButton';
 
 interface PetDetailsProps {
 	pets: Pet[];
@@ -17,9 +18,7 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 		return (
 			<Details>
 				<TopActions>
-					<BackButton to="/" aria-label="Back to pets overview">
-						&larr;
-					</BackButton>
+					<BackButton to="/" label="Back to pets overview" />
 				</TopActions>
 				<h1>Pet not found</h1>
 				<Link to="/">Back to pets</Link>
@@ -49,9 +48,8 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 	return (
 		<Details>
 			<TopActions>
-				<BackButton to="/" aria-label="Back to pets overview">
-					&larr;
-				</BackButton>
+				<BackButton to="/" label="Back to pets overview" />
+				<EditButton to={`/pets/${pet.id}/edit`}>Edit</EditButton>
 				<DeleteButton type="button" onClick={handleDelete}>
 					Delete
 				</DeleteButton>
@@ -99,6 +97,15 @@ const DeleteButton = styled.button({
 	font: 'inherit',
 	fontWeight: 800,
 	padding: '10px 14px',
+});
+
+const EditButton = styled(Link)({
+	borderRadius: '8px',
+	backgroundColor: '#dfeee9',
+	color: '#28575a',
+	fontWeight: 800,
+	padding: '10px 14px',
+	textDecoration: 'none',
 });
 
 const PicturePlaceholder = styled.div({

@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Layout from './components/Layout';
 import AddPetForm from './components/AddPetForm';
+import EditPetForm from './components/EditPetForm';
 import PetsOverview from './components/PetsOverview';
 import { deletePet as deletePetFromDb, getPets, savePet } from './db';
 import About from './components/About';
@@ -46,6 +47,15 @@ function App() {
 		setPets((currentPets) => [...currentPets, pet]);
 	}
 
+	async function handleUpdatePet(pet: Pet) {
+		await savePet(pet);
+		setPets((currentPets) =>
+			currentPets.map((currentPet) =>
+				currentPet.id === pet.id ? pet : currentPet,
+			),
+		);
+	}
+
 	return (
 		<BrowserRouter>
 			<Layout>
@@ -57,6 +67,12 @@ function App() {
 					/>
 					<Route path="/pets-overview" element={<Navigate to="/" replace />} />
 					<Route path="/about" element={<About />} />
+					<Route
+						path="/pets/:petId/edit"
+						element={
+							<EditPetForm pets={pets} onUpdatePet={handleUpdatePet} />
+						}
+					/>
 					<Route
 						path="/pets/:petId"
 						element={<PetDetails pets={pets} onDeletePet={handleDeletePet} />}
