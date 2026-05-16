@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import type { Pet } from '../db';
+import type { Pet } from '../types/pet';
 
 interface PetCardProps {
 	pet: Pet;

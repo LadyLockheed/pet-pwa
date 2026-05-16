@@ -3,14 +3,10 @@ import { useEffect, useState } from 'react';
 import Layout from './components/Layout';
 import AddPetForm from './components/AddPetForm';
 import PetsOverview from './components/PetsOverview';
-import {
-	deletePet as deletePetFromDb,
-	getPets,
-	savePet,
-	type Pet,
-} from './db';
+import { deletePet as deletePetFromDb, getPets, savePet } from './db';
 import About from './components/About';
 import PetDetails from './components/PetDetails';
+import type { Pet } from './types/pet';
 
 //TODO byt ut age till födelsedag och visa ålder utifrån den istället
 //TODO Gå igenom alla componetnter och städa upp

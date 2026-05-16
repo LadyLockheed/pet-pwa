@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import type { Pet } from '../db';
 import PetCard from './PetCard';
+import type { Pet } from '../types/pet';
 
 interface PetsOverviewProps {
 	pets: Pet[];

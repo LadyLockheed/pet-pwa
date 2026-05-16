@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { petType, type Pet, type PetSpecies } from '../db';
+import { petType, type Pet, type PetSpecies } from '../types/pet';
 
 const MAX_IMAGE_SIZE = 1024;
 const IMAGE_QUALITY = 0.8;

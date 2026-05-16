@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import type { Pet } from '../db';
+import type { Pet } from '../types/pet';
 
 interface PetDetailsProps {
 	pets: Pet[];
