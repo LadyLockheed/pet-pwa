@@ -90,19 +90,6 @@ const TopActions = styled.div({
 	width: '100%',
 });
 
-const BackButton = styled(Link)({
-	display: 'grid',
-	width: '40px',
-	height: '40px',
-	placeItems: 'center',
-	borderRadius: '8px',
-	backgroundColor: '#dfeee9',
-	color: '#28575a',
-	fontSize: '1.5rem',
-	fontWeight: 800,
-	textDecoration: 'none',
-});
-
 const DeleteButton = styled.button({
 	border: 0,
 	borderRadius: '8px',
