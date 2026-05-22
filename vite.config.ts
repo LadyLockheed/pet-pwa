@@ -11,6 +11,9 @@ export default defineConfig({
 			includeAssets: [
 				'favicon.svg',
 				'pwa-icon.svg',
+				'pwa-icon-192.svg',
+				'pwa-icon-512.svg',
+				'pwa-icon-192.png',
 				'pwa-icon-512.png',
 				'screenshots/pet-journal-wide.png',
 				'screenshots/pet-journal-mobile.png',
@@ -26,6 +29,18 @@ export default defineConfig({
 				start_url: '/',
 				scope: '/',
 				icons: [
+					{
+						src: '/pwa-icon-192.png',
+						sizes: '192x192',
+						type: 'image/png',
+						purpose: 'any',
+					},
+					{
+						src: '/pwa-icon-192.png',
+						sizes: '192x192',
+						type: 'image/png',
+						purpose: 'maskable',
+					},
 					{
 						src: '/pwa-icon-512.png',
 						sizes: '512x512',
