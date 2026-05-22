@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ImagePlus } from 'lucide-react';
 import styled from 'styled-components';
 import {
 	petType,
@@ -9,6 +10,9 @@ import {
 	type PetSex,
 	type PetSpecies,
 } from '../types/pet';
+import { spacings } from '../styles/spacings';
+import { colors } from '../styles/colors';
+import { typography } from '../styles/typography';
 
 const MAX_IMAGE_SIZE = 1024;
 const IMAGE_QUALITY = 0.8;
@@ -23,7 +27,9 @@ interface PetFormProps {
 export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 	const [name, setName] = useState(pet?.name ?? '');
 	const [breed, setBreed] = useState(pet?.breed ?? '');
-	const [species, setSpecies] = useState<PetSpecies>(pet?.species ?? petType.dog);
+	const [species, setSpecies] = useState<PetSpecies>(
+		pet?.species ?? petType.dog,
+	);
 	const [sex, setSex] = useState<PetSex>(pet?.sex ?? 'female');
 	const [dateOfBirth, setDateOfBirth] = useState(pet?.dateOfBirth ?? '');
 	const [pictureUrl, setPictureUrl] = useState<string | undefined>(
@@ -194,20 +200,33 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 	return (
 		<Form onSubmit={handleSubmit}>
-			<Field>
-				<span>Picture</span>
-				<input type="file" accept="image/*" onChange={handlePictureChange} />
-			</Field>
+			<FormHeader>
+				<FormTitle>{pet ? 'Edit pet profile' : 'Add a pet profile'}</FormTitle>
+				<FormIntro>
+					Fill in the same details shown on the pet profile.
+				</FormIntro>
+			</FormHeader>
+
+			<ImageField>
+				<span>Pet image</span>
+				<ImageUploadTile>
+					{pictureUrl ? (
+						<PicturePreview src={pictureUrl} alt="Selected pet preview" />
+					) : (
+						<>
+							<ImagePlus size={22} />
+							<span>Upload image</span>
+						</>
+					)}
+					<input type="file" accept="image/*" onChange={handlePictureChange} />
+				</ImageUploadTile>
+			</ImageField>
 
 			{isProcessingPicture ? (
 				<PictureStatus>Preparing picture...</PictureStatus>
 			) : null}
 
 			{pictureError ? <ErrorMessage>{pictureError}</ErrorMessage> : null}
-
-			{pictureUrl ? (
-				<PicturePreview src={pictureUrl} alt="Selected pet preview" />
-			) : null}
 
 			<Field>
 				<span>Name</span>
@@ -384,73 +403,174 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 const Form = styled.form({
 	display: 'grid',
-	gap: '16px',
+	gap: spacings.x4,
 	width: '100%',
 	maxWidth: '420px',
+	boxSizing: 'border-box',
+	borderRadius: '4px',
+	backgroundColor: colors.white,
+	padding: spacings.x4,
+});
+
+const FormHeader = styled.header({
+	display: 'grid',
+	gap: spacings.x2,
+});
+
+const FormTitle = styled.h1({
+	...typography.screenTitle,
+	margin: 0,
+});
+
+const FormIntro = styled.p({
+	...typography.body,
+	margin: 0,
 });
 
 const Field = styled.label({
 	display: 'grid',
 	gap: '6px',
-	fontWeight: 700,
+	...typography.body,
+	'& span': {
+		fontWeight: 500,
+	},
+	'& input': {
+		boxSizing: 'border-box',
+		width: '100%',
+		minHeight: '36px',
+		border: `1px solid ${colors.darkBeige}`,
+		borderRadius: '4px',
+		backgroundColor: '#ffffff',
+		boxShadow: '0 2px 5px rgba(47, 25, 15, 0.12)',
+		color: colors.blackBrown,
+		font: 'inherit',
+		padding: `${spacings.x2} ${spacings.x3}`,
+	},
+	'& input[type="file"]': {
+		boxShadow: 'none',
+		padding: spacings.x2,
+	},
+});
+
+const ImageField = styled.label({
+	display: 'grid',
+	justifyItems: 'start',
+	gap: '6px',
+	...typography.body,
+	'& > span': {
+		fontWeight: 500,
+	},
+});
+
+const ImageUploadTile = styled.span({
+	display: 'grid',
+	width: '128px',
+	aspectRatio: '1',
+	overflow: 'hidden',
+	placeItems: 'center',
+	alignContent: 'center',
+	gap: spacings.x1,
+	border: `1px dashed ${colors.darkBeige}`,
+	borderRadius: '4px',
+	backgroundColor: '#fbf8f4',
+	color: colors.warmBrown,
+	cursor: 'pointer',
+	'& input': {
+		position: 'absolute',
+		width: '1px',
+		height: '1px',
+		overflow: 'hidden',
+		clip: 'rect(0 0 0 0)',
+		clipPath: 'inset(50%)',
+		whiteSpace: 'nowrap',
+	},
 });
 
 const Fieldset = styled.fieldset({
 	display: 'flex',
-	gap: '16px',
+	gap: spacings.x4,
 	margin: 0,
 	padding: 0,
 	border: 0,
+	'& legend': {
+		...typography.body,
+		marginBottom: '6px',
+		fontWeight: 500,
+	},
 });
 
 const RadioOption = styled.label({
 	display: 'flex',
 	alignItems: 'center',
 	gap: '6px',
-	fontWeight: 700,
+	...typography.body,
 });
 
 const Section = styled.details({
-	borderTop: '1px solid #d7ded8',
-	paddingTop: '12px',
+	position: 'relative',
+	borderTop: `1px solid ${colors.darkBeige}`,
+	paddingTop: spacings.x3,
 	'& summary': {
 		cursor: 'pointer',
-		fontWeight: 800,
+		display: 'flex',
+		alignItems: 'center',
+		...typography.sectionLabel,
+		listStyle: 'none',
+	},
+	'& summary::-webkit-details-marker': {
+		display: 'none',
+	},
+	'& summary::after': {
+		content: '""',
+		flex: 1,
+		height: '1px',
+		marginLeft: spacings.x2,
+		backgroundColor: colors.darkBeige,
+	},
+	'&[open]': {
+		border: `1px solid ${colors.darkBeige}`,
+		borderRadius: '4px',
+		backgroundColor: '#fbf8f4',
+		padding: spacings.x3,
+	},
+	'&[open] summary::after': {
+		display: 'none',
 	},
 });
 
 const SectionContent = styled.div({
 	display: 'grid',
-	gap: '16px',
-	paddingTop: '14px',
+	gap: spacings.x4,
+	paddingTop: spacings.x4,
 });
 
 const PictureStatus = styled.p({
-	color: '#59636b',
-	fontSize: '0.9rem',
+	...typography.meta,
+	margin: 0,
 	textAlign: 'center',
 });
 
 const ErrorMessage = styled.p({
+	margin: 0,
 	color: '#8a3d3d',
-	fontSize: '0.9rem',
+	fontSize: typography.meta.fontSize,
 	fontWeight: 700,
 	textAlign: 'center',
 });
 
 const PicturePreview = styled.img({
-	width: '160px',
+	width: '100%',
+	height: '100%',
 	aspectRatio: '1',
-	justifySelf: 'center',
-	borderRadius: '8px',
+	borderRadius: '4px',
 	objectFit: 'cover',
 });
 
 const SubmitButton = styled.button({
 	border: 0,
-	borderRadius: '8px',
-	backgroundColor: '#2f6f73',
-	color: '#ffffff',
+	borderRadius: '4px',
+	backgroundColor: colors.warmBrown,
+	color: colors.warmWhite,
 	cursor: 'pointer',
 	font: 'inherit',
 	fontWeight: 800,
