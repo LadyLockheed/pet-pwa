@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
+import { MoveLeft } from 'lucide-react';
 import styled from 'styled-components';
+import { colors } from '../styles/colors';
 
 interface BackButtonProps {
 	to: string;
@@ -9,19 +11,18 @@ interface BackButtonProps {
 export default function BackButton({ to, label }: BackButtonProps) {
 	return (
 		<ButtonLink to={to} aria-label={label}>
-			&larr;
+			<MoveLeft size={30} />
 		</ButtonLink>
 	);
 }
 
 const ButtonLink = styled(Link)({
 	display: 'grid',
-	width: '40px',
-	height: '40px',
+	width: '50px',
+	height: '50px',
 	placeItems: 'center',
 	borderRadius: '8px',
-	backgroundColor: '#dfeee9',
-	color: '#28575a',
+	color: colors.blackBrown,
 	fontSize: '1.5rem',
 	fontWeight: 800,
 	textDecoration: 'none',
