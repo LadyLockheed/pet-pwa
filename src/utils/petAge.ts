@@ -31,3 +31,17 @@ export function formatAgeFromDateOfBirth(dateOfBirth?: string) {
 
 	return `${yearText}, ${monthText}`;
 }
+
+export function formatDateFromDateOfBirth(dateOfBirth?: string) {
+	if (!dateOfBirth) {
+		return 'Unknown';
+	}
+
+	const [year, month, day] = dateOfBirth.split('-');
+
+	if (!year || !month || !day) {
+		return 'Unknown';
+	}
+
+	return `${Number(day)}/${Number(month)}-${year.slice(-2)}`;
+}
