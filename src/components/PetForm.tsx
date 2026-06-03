@@ -5,6 +5,7 @@ import {
 	petType,
 	type Pet,
 	type PetBreederInfo,
+	type HeatCycle,
 	type PetHealth,
 	type PetMeasurements,
 	type PetSex,
@@ -13,17 +14,21 @@ import {
 import { spacings } from '../styles/spacings';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
-
+import CollapsibleSection from './CollapsibleSection';
 const MAX_IMAGE_SIZE = 1024;
 const IMAGE_QUALITY = 0.8;
 const MAX_ORIGINAL_FILE_SIZE = 25 * 1024 * 1024;
+const emptyHeatCycle: HeatCycle = {};
 
 interface PetFormProps {
 	pet?: Pet;
 	submitLabel: string;
 	onSubmit: (pet: Pet) => Promise<void>;
 }
+//TODO ska man flytta allt detta nån annanstans?
+// TODO se över där den satt ett defaultvärde, tex om man inte valt species, så sätter den dog som default, fel.
 
+// TODO Validation, tex föredatum får inte vara efter sista datum för heat
 export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 	const [name, setName] = useState(pet?.name ?? '');
 	const [breed, setBreed] = useState(pet?.breed ?? '');
@@ -35,23 +40,21 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 	const [pictureUrl, setPictureUrl] = useState<string | undefined>(
 		pet?.pictureUrl,
 	);
+	const [height, setHeight] = useState(
+		pet?.measurements?.height?.toString() ?? '',
+	);
 	const [backLength, setBackLength] = useState(
 		pet?.measurements?.backLength?.toString() ?? '',
 	);
 	const [neckCircumference, setNeckCircumference] = useState(
 		pet?.measurements?.neckCircumference?.toString() ?? '',
 	);
+	const [weight, setWeight] = useState(pet?.health?.weight?.toString() ?? '');
 	const [latestVaccinationDate, setLatestVaccinationDate] = useState(
 		pet?.health?.latestVaccinationDate ?? '',
 	);
-	const [heatStartDate, setHeatStartDate] = useState(
-		pet?.health?.heatCycle?.startDate ?? '',
-	);
-	const [heatEndDate, setHeatEndDate] = useState(
-		pet?.health?.heatCycle?.endDate ?? '',
-	);
-	const [standingHeatDate, setStandingHeatDate] = useState(
-		pet?.health?.heatCycle?.standingHeatDate ?? '',
+	const [heatCycles, setHeatCycles] = useState<HeatCycle[]>(
+		getInitialHeatCycles(pet),
 	);
 	const [breederName, setBreederName] = useState(
 		pet?.breederInfo?.breederName ?? '',
@@ -68,6 +71,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 		const now = new Date().toISOString();
 		const measurements = getMeasurements();
 		const health = getHealth();
+		const savedHeatCycles = getHeatCycles();
 		const breederInfo = getBreederInfo();
 
 		await onSubmit({
@@ -80,6 +84,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			pictureUrl,
 			...(measurements ? { measurements } : {}),
 			...(health ? { health } : {}),
+			...(savedHeatCycles ? { heatCycles: savedHeatCycles } : {}),
 			...(breederInfo ? { breederInfo } : {}),
 			createdAt: pet?.createdAt ?? now,
 			updatedAt: now,
@@ -88,48 +93,84 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 	function getMeasurements(): PetMeasurements | undefined {
 		const measurements: PetMeasurements = {};
-
-		if (backLength) {
-			measurements.backLength = Number(backLength);
-		}
-
-		if (neckCircumference) {
+		if (height) measurements.height = Number(height);
+		if (backLength) measurements.backLength = Number(backLength);
+		if (neckCircumference)
 			measurements.neckCircumference = Number(neckCircumference);
-		}
-
-		return Object.keys(measurements).length > 0 ? measurements : undefined;
+		return pickDefined(measurements);
 	}
 
 	function getHealth(): PetHealth | undefined {
 		const health: PetHealth = {};
-
-		if (latestVaccinationDate) {
+		if (latestVaccinationDate)
 			health.latestVaccinationDate = latestVaccinationDate;
+		if (weight) health.weight = Number(weight);
+		return pickDefined(health);
+	}
+
+	function getHeatCycles(): HeatCycle[] | undefined {
+		if (sex !== 'female') {
+			return undefined;
 		}
 
-		if (heatStartDate || heatEndDate || standingHeatDate) {
-			health.heatCycle = {
-				...(heatStartDate ? { startDate: heatStartDate } : {}),
-				...(heatEndDate ? { endDate: heatEndDate } : {}),
-				...(standingHeatDate ? { standingHeatDate } : {}),
-			};
-		}
+		const savedHeatCycles = heatCycles
+			.filter((heatCycle) => heatCycle.startDate)
+			.map((heatCycle) => ({
+				startDate: heatCycle.startDate,
+				...(heatCycle.endDate ? { endDate: heatCycle.endDate } : {}),
+				...(heatCycle.standingHeatStartDate
+					? { standingHeatStartDate: heatCycle.standingHeatStartDate }
+					: {}),
+				...(heatCycle.standingHeatEndDate
+					? { standingHeatEndDate: heatCycle.standingHeatEndDate }
+					: {}),
+			}));
 
-		return Object.keys(health).length > 0 ? health : undefined;
+		return savedHeatCycles.length > 0 ? savedHeatCycles : undefined;
+	}
+
+	function updateHeatCycle(
+		index: number,
+		field: keyof HeatCycle,
+		value: string,
+	) {
+		setHeatCycles((currentHeatCycles) =>
+			currentHeatCycles.map((heatCycle, heatCycleIndex) =>
+				heatCycleIndex === index
+					? {
+							...heatCycle,
+							[field]: value,
+						}
+					: heatCycle,
+			),
+		);
+	}
+
+	function addHeatCycle() {
+		setHeatCycles((currentHeatCycles) => [
+			...currentHeatCycles,
+			{ ...emptyHeatCycle },
+		]);
+	}
+
+	function removeHeatCycle(index: number) {
+		setHeatCycles((currentHeatCycles) => {
+			const nextHeatCycles = currentHeatCycles.filter(
+				(_, heatCycleIndex) => heatCycleIndex !== index,
+			);
+
+			return nextHeatCycles.length > 0
+				? nextHeatCycles
+				: [{ ...emptyHeatCycle }];
+		});
 	}
 
 	function getBreederInfo(): PetBreederInfo | undefined {
 		const breederInfo: PetBreederInfo = {};
-
-		if (breederName.trim()) {
-			breederInfo.breederName = breederName.trim();
-		}
-
-		if (skkHunddataUrl.trim()) {
+		if (breederName.trim()) breederInfo.breederName = breederName.trim();
+		if (skkHunddataUrl.trim())
 			breederInfo.skkHunddataUrl = skkHunddataUrl.trim();
-		}
-
-		return Object.keys(breederInfo).length > 0 ? breederInfo : undefined;
+		return pickDefined(breederInfo);
 	}
 
 	async function handlePictureChange(
@@ -200,13 +241,6 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 	return (
 		<Form onSubmit={handleSubmit}>
-			<FormHeader>
-				<FormTitle>{pet ? 'Edit pet profile' : 'Add a pet profile'}</FormTitle>
-				<FormIntro>
-					Fill in the same details shown on the pet profile.
-				</FormIntro>
-			</FormHeader>
-
 			<ImageField>
 				<span>Pet image</span>
 				<ImageUploadTile>
@@ -255,6 +289,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						type="radio"
 						name="sex"
 						value="female"
+						required
 						checked={sex === 'female'}
 						onChange={() => setSex('female')}
 					/>
@@ -272,29 +307,31 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				</RadioOption>
 			</Fieldset>
 
-			<Fieldset>
-				<legend>Species</legend>
-				<RadioOption>
-					<input
-						type="radio"
-						name="species"
-						value={petType.dog}
-						checked={species === petType.dog}
-						onChange={() => setSpecies(petType.dog)}
-					/>
-					Dog
-				</RadioOption>
-				<RadioOption>
-					<input
-						type="radio"
-						name="species"
-						value={petType.cat}
-						checked={species === petType.cat}
-						onChange={() => setSpecies(petType.cat)}
-					/>
-					Cat
-				</RadioOption>
-			</Fieldset>
+			<SectionContent>
+				<Fieldset>
+					<legend>Species</legend>
+					<RadioOption>
+						<input
+							type="radio"
+							name="species"
+							value={petType.dog}
+							checked={species === petType.dog}
+							onChange={() => setSpecies(petType.dog)}
+						/>
+						Dog
+					</RadioOption>
+					<RadioOption>
+						<input
+							type="radio"
+							name="species"
+							value={petType.cat}
+							checked={species === petType.cat}
+							onChange={() => setSpecies(petType.cat)}
+						/>
+						Cat
+					</RadioOption>
+				</Fieldset>
+			</SectionContent>
 
 			<Field>
 				<span>Date of birth</span>
@@ -307,97 +344,198 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				/>
 			</Field>
 
-			<Section open={Boolean(pet?.measurements)}>
-				<summary>Measurements</summary>
-				<SectionContent>
-					<Field>
-						<span>Back length</span>
-						<input
-							type="number"
-							min="0"
-							inputMode="decimal"
-							value={backLength}
-							onChange={(event) => setBackLength(event.target.value)}
-						/>
-					</Field>
-					<Field>
-						<span>Neck circumference</span>
-						<input
-							type="number"
-							min="0"
-							inputMode="decimal"
-							value={neckCircumference}
-							onChange={(event) => setNeckCircumference(event.target.value)}
-						/>
-					</Field>
-				</SectionContent>
-			</Section>
+			<CollapsibleSection
+				title="Measurements"
+				defaultOpen={Boolean(pet?.measurements)}
+			>
+				<Field>
+					<span>Height</span>
+					<input
+						type="number"
+						min="0"
+						inputMode="decimal"
+						value={height}
+						onChange={(event) => setHeight(event.target.value)}
+					/>
+				</Field>
+				<Field>
+					<span>Back length</span>
+					<input
+						type="number"
+						min="0"
+						inputMode="decimal"
+						value={backLength}
+						onChange={(event) => setBackLength(event.target.value)}
+					/>
+				</Field>
+				<Field>
+					<span>Neck circumference</span>
+					<input
+						type="number"
+						min="0"
+						inputMode="decimal"
+						value={neckCircumference}
+						onChange={(event) => setNeckCircumference(event.target.value)}
+					/>
+				</Field>
+			</CollapsibleSection>
 
-			<Section open={Boolean(pet?.health)}>
-				<summary>Health</summary>
-				<SectionContent>
-					<Field>
-						<span>Latest vaccination date</span>
-						<input
-							type="date"
-							max={new Date().toISOString().split('T')[0]}
-							value={latestVaccinationDate}
-							onChange={(event) => setLatestVaccinationDate(event.target.value)}
-						/>
-					</Field>
-					<Field>
-						<span>Heat cycle start</span>
-						<input
-							type="date"
-							value={heatStartDate}
-							onChange={(event) => setHeatStartDate(event.target.value)}
-						/>
-					</Field>
-					<Field>
-						<span>Heat cycle end</span>
-						<input
-							type="date"
-							value={heatEndDate}
-							onChange={(event) => setHeatEndDate(event.target.value)}
-						/>
-					</Field>
-					<Field>
-						<span>Standing heat date</span>
-						<input
-							type="date"
-							value={standingHeatDate}
-							onChange={(event) => setStandingHeatDate(event.target.value)}
-						/>
-					</Field>
-				</SectionContent>
-			</Section>
+			<CollapsibleSection title="Health" defaultOpen={Boolean(pet?.health)}>
+				<Field>
+					<span>Latest vaccination date</span>
+					<input
+						type="date"
+						max={new Date().toISOString().split('T')[0]}
+						value={latestVaccinationDate}
+						onChange={(event) => setLatestVaccinationDate(event.target.value)}
+					/>
+				</Field>
+				<Field>
+					<span>Weight</span>
+					<input
+						type="number"
+						min="0"
+						inputMode="decimal"
+						value={weight}
+						onChange={(event) => setWeight(event.target.value)}
+					/>
+				</Field>
+			</CollapsibleSection>
 
-			<Section open={Boolean(pet?.breederInfo)}>
-				<summary>Breeder information</summary>
-				<SectionContent>
-					<Field>
-						<span>Breeder name</span>
-						<input
-							type="text"
-							value={breederName}
-							onChange={(event) => setBreederName(event.target.value)}
-						/>
-					</Field>
-					<Field>
-						<span>SKK Hunddata link</span>
-						<input
-							type="url"
-							value={skkHunddataUrl}
-							onChange={(event) => setSkkHunddataUrl(event.target.value)}
-						/>
-					</Field>
-				</SectionContent>
-			</Section>
+			{sex === 'female' ? (
+				<CollapsibleSection
+					title="Heat cycles"
+					defaultOpen={heatCycles.some(hasHeatCycleValue)}
+				>
+					<HeatCycleGroup>
+						{heatCycles.map((heatCycle, index) => (
+							<HeatCycleCard key={index}>
+								<HeatCycleHeader>
+									<span>Heat cycle {index + 1}</span>
+									{heatCycles.length > 1 ? (
+										<RemoveButton
+											type="button"
+											onClick={() => removeHeatCycle(index)}
+										>
+											Remove
+										</RemoveButton>
+									) : null}
+								</HeatCycleHeader>
+								<Field>
+									<span>Heat cycle start</span>
+									<input
+										type="date"
+										value={heatCycle.startDate ?? ''}
+										required={Boolean(heatCycle.endDate)}
+										onChange={(event) =>
+											updateHeatCycle(index, 'startDate', event.target.value)
+										}
+									/>
+								</Field>
+								<Field>
+									<span>Heat cycle end</span>
+									<input
+										type="date"
+										value={heatCycle.endDate ?? ''}
+										required={Boolean(heatCycle.startDate)}
+										min={heatCycle.startDate || undefined}
+										onChange={(event) =>
+											updateHeatCycle(index, 'endDate', event.target.value)
+										}
+									/>
+								</Field>
+								<StandingHeatGroup>
+									<StandingHeatLabel>Standing heat <OptionalTag>(optional)</OptionalTag></StandingHeatLabel>
+									<Field>
+										<span>Start</span>
+										<input
+											type="date"
+											value={heatCycle.standingHeatStartDate ?? ''}
+											required={Boolean(heatCycle.standingHeatEndDate)}
+											onChange={(event) =>
+												updateHeatCycle(
+													index,
+													'standingHeatStartDate',
+													event.target.value,
+												)
+											}
+										/>
+									</Field>
+									<Field>
+										<span>End</span>
+										<input
+											type="date"
+											value={heatCycle.standingHeatEndDate ?? ''}
+											required={Boolean(heatCycle.standingHeatStartDate)}
+											min={heatCycle.standingHeatStartDate || undefined}
+											onChange={(event) =>
+												updateHeatCycle(
+													index,
+													'standingHeatEndDate',
+													event.target.value,
+												)
+											}
+										/>
+									</Field>
+								</StandingHeatGroup>
+							</HeatCycleCard>
+						))}
+						<AddButton type="button" onClick={addHeatCycle}>
+							+ Add heat cycle
+						</AddButton>
+					</HeatCycleGroup>
+				</CollapsibleSection>
+			) : null}
+
+			<CollapsibleSection
+				title="Breeder information"
+				defaultOpen={Boolean(pet?.breederInfo)}
+			>
+				<Field>
+					<span>Breeder name</span>
+					<input
+						type="text"
+						value={breederName}
+						onChange={(event) => setBreederName(event.target.value)}
+					/>
+				</Field>
+				<Field>
+					<span>SKK Hunddata link</span>
+					<input
+						type="url"
+						value={skkHunddataUrl}
+						onChange={(event) => setSkkHunddataUrl(event.target.value)}
+					/>
+				</Field>
+			</CollapsibleSection>
 
 			<SubmitButton type="submit" disabled={isProcessingPicture}>
 				{submitLabel}
 			</SubmitButton>
 		</Form>
+	);
+}
+
+function pickDefined<T extends object>(obj: T): T | undefined {
+	return Object.keys(obj).length > 0 ? obj : undefined;
+}
+
+function getInitialHeatCycles(pet?: Pet) {
+	const heatCycles = pet?.heatCycles;
+
+	if (heatCycles && heatCycles.length > 0) {
+		return heatCycles;
+	}
+
+	return [{ ...emptyHeatCycle }];
+}
+
+function hasHeatCycleValue(heatCycle: HeatCycle) {
+	return Boolean(
+		heatCycle.startDate ||
+		heatCycle.endDate ||
+		heatCycle.standingHeatStartDate ||
+		heatCycle.standingHeatEndDate,
 	);
 }
 
@@ -410,21 +548,7 @@ const Form = styled.form({
 	borderRadius: '4px',
 	backgroundColor: colors.white,
 	padding: spacings.x4,
-});
-
-const FormHeader = styled.header({
-	display: 'grid',
-	gap: spacings.x2,
-});
-
-const FormTitle = styled.h1({
-	...typography.screenTitle,
-	margin: 0,
-});
-
-const FormIntro = styled.p({
-	...typography.body,
-	margin: 0,
+	border: `1px solid ${colors.blackBrown}`,
 });
 
 const Field = styled.label({
@@ -446,13 +570,17 @@ const Field = styled.label({
 		font: 'inherit',
 		padding: `${spacings.x2} ${spacings.x3}`,
 	},
+	'& input:focus': {
+		borderColor: colors.orange,
+		outline: 'none',
+	},
 	'& input[type="file"]': {
 		boxShadow: 'none',
 		padding: spacings.x2,
 	},
 });
 
-const ImageField = styled.label({
+const ImageField = styled.div({
 	display: 'grid',
 	justifyItems: 'start',
 	gap: '6px',
@@ -462,7 +590,7 @@ const ImageField = styled.label({
 	},
 });
 
-const ImageUploadTile = styled.span({
+const ImageUploadTile = styled.label({
 	display: 'grid',
 	width: '128px',
 	aspectRatio: '1',
@@ -506,42 +634,76 @@ const RadioOption = styled.label({
 	...typography.body,
 });
 
-const Section = styled.details({
-	position: 'relative',
-	borderTop: `1px solid ${colors.darkBeige}`,
-	paddingTop: spacings.x3,
-	'& summary': {
-		cursor: 'pointer',
-		display: 'flex',
-		alignItems: 'center',
-		...typography.sectionLabel,
-		listStyle: 'none',
-	},
-	'& summary::-webkit-details-marker': {
-		display: 'none',
-	},
-	'& summary::after': {
-		content: '""',
-		flex: 1,
-		height: '1px',
-		marginLeft: spacings.x2,
-		backgroundColor: colors.darkBeige,
-	},
-	'&[open]': {
-		border: `1px solid ${colors.darkBeige}`,
-		borderRadius: '4px',
-		backgroundColor: '#fbf8f4',
-		padding: spacings.x3,
-	},
-	'&[open] summary::after': {
-		display: 'none',
-	},
-});
-
 const SectionContent = styled.div({
 	display: 'grid',
 	gap: spacings.x4,
-	paddingTop: spacings.x4,
+	marginTop: spacings.x3,
+	border: `1px solid ${colors.darkBeige}`,
+	borderRadius: '4px',
+	backgroundColor: '#fbf8f4',
+	padding: spacings.x3,
+});
+
+const HeatCycleGroup = styled.div({
+	display: 'grid',
+	gap: spacings.x3,
+});
+
+const HeatCycleCard = styled.div({
+	display: 'grid',
+	gap: spacings.x3,
+	border: `1px solid ${colors.darkBeige}`,
+	borderRadius: '4px',
+	padding: spacings.x3,
+});
+
+const HeatCycleHeader = styled.div({
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'space-between',
+	gap: spacings.x3,
+	...typography.body,
+	fontWeight: 700,
+});
+
+const StandingHeatGroup = styled.div({
+	display: 'grid',
+	gap: spacings.x3,
+	paddingTop: spacings.x2,
+	borderTop: `1px solid ${colors.darkBeige}`,
+});
+
+const StandingHeatLabel = styled.span({
+	...typography.body,
+	fontWeight: 700,
+});
+
+const OptionalTag = styled.span({
+	...typography.meta,
+	fontWeight: 400,
+	color: colors.warmBrown,
+});
+
+const AddButton = styled.button({
+	justifySelf: 'start',
+	border: `1px solid ${colors.darkBeige}`,
+	borderRadius: '4px',
+	backgroundColor: colors.white,
+	color: colors.warmBrown,
+	cursor: 'pointer',
+	font: 'inherit',
+	fontWeight: 700,
+	padding: `${spacings.x2} ${spacings.x3}`,
+});
+
+const RemoveButton = styled.button({
+	border: 0,
+	backgroundColor: 'transparent',
+	color: '#8a3d3d',
+	cursor: 'pointer',
+	font: 'inherit',
+	fontWeight: 700,
+	padding: 0,
 });
 
 const PictureStatus = styled.p({
