@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import styled from 'styled-components';
 import { colors } from '../styles/colors';
@@ -18,8 +18,14 @@ export default function CollapsibleSection({
 	className,
 	children,
 }: CollapsibleSectionProps) {
+	const [isOpen, setIsOpen] = useState(defaultOpen);
+
 	return (
-		<Section open={defaultOpen} className={className}>
+		<Section
+			open={isOpen}
+			className={className}
+			onToggle={(event) => setIsOpen(event.currentTarget.open)}
+		>
 			<summary>
 				<span>{title}</span>
 				<SectionLine />
@@ -34,7 +40,7 @@ export default function CollapsibleSection({
 const Section = styled.details({
 	position: 'relative',
 	width: '100%',
-	paddingTop: spacings.x3,
+	paddingTop: spacings.x4,
 	'& summary': {
 		cursor: 'pointer',
 		display: 'flex',
@@ -50,7 +56,7 @@ const Section = styled.details({
 		width: '18px',
 		height: '18px',
 		flexShrink: 0,
-		color: colors.warmBrown,
+		color: colors.orange,
 	},
 	'& .section-chevron-up': {
 		display: 'none',
@@ -68,15 +74,12 @@ const SectionLine = styled.span({
 	height: '1px',
 	marginLeft: spacings.x2,
 	marginRight: spacings.x2,
-	backgroundColor: colors.warmBrown,
+	backgroundColor: colors.orange,
 });
 
 const SectionContent = styled.div({
 	display: 'grid',
 	gap: spacings.x4,
 	marginTop: spacings.x3,
-	border: `1px solid ${colors.darkBeige}`,
-	borderRadius: '4px',
-	backgroundColor: '#fbf8f4',
-	padding: spacings.x3,
+	borderRadius: '8px',
 });
