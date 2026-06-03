@@ -2,8 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Pet } from '../types/pet';
 import { formatAgeFromDateOfBirth } from '../utils/petAge';
-import BackButton from './BackButton';
-
+import PageHeader from './PageHeader';
 interface PetDetailsProps {
 	pets: Pet[];
 	onDeletePet: (petId: string) => Promise<void>;
@@ -16,13 +15,16 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 
 	if (!pet) {
 		return (
-			<Details>
-				<TopActions>
-					<BackButton to="/" label="Back to pets overview" />
-				</TopActions>
-				<h1>Pet not found</h1>
-				<Link to="/">Back to pets</Link>
-			</Details>
+			<>
+				<PageHeader
+					to="/"
+					label="Back to pets overview"
+					title={'Pet not found'}
+				/>
+				<Details>
+					<Link to="/">Back to pets</Link>
+				</Details>
+			</>
 		);
 	}
 
@@ -81,7 +83,7 @@ const Details = styled.section({
 	padding: '24px',
 });
 
-const TopActions = styled.div({
+const PictureContainer = styled.div({
 	display: 'flex',
 	justifyContent: 'space-between',
 	alignItems: 'center',
