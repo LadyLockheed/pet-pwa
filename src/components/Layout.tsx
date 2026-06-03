@@ -12,7 +12,7 @@ export default function Layout({ children }: LayoutProps) {
 			<BackgroundLayer aria-hidden="true">
 				<Wave viewBox="0 0 1440 320" preserveAspectRatio="none">
 					<path
-						fill={colors.background}
+						fill={colors.pageBg}
 						fillOpacity="1"
 						d="M0,192L60,202.7C120,213,240,235,360,229.3C480,224,600,192,720,154.7C840,117,960,75,1080,64C1200,53,1320,75,1380,85.3L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
 					/>
@@ -33,7 +33,7 @@ const Wrapper = styled.div({
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	backgroundColor: colors.background,
+	backgroundColor: colors.pageBg,
 	padding: '20px',
 });
 
