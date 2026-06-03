@@ -9,6 +9,7 @@ export type PetSpecies = (typeof petType)[keyof typeof petType];
 export type PetSex = 'female' | 'male';
 
 export type PetMeasurements = {
+	height?: number;
 	backLength?: number;
 	neckCircumference?: number;
 };
@@ -16,12 +17,13 @@ export type PetMeasurements = {
 export type HeatCycle = {
 	startDate?: string;
 	endDate?: string;
-	standingHeatDate?: string;
+	standingHeatStartDate?: string;
+	standingHeatEndDate?: string;
 };
 
 export type PetHealth = {
 	latestVaccinationDate?: string;
-	heatCycle?: HeatCycle;
+	weight?: number;
 };
 
 export type PetBreederInfo = {
@@ -40,6 +42,7 @@ export type Pet = {
 	pictureUrl?: string;
 	measurements?: PetMeasurements;
 	health?: PetHealth;
+	heatCycles?: HeatCycle[];
 	breederInfo?: PetBreederInfo;
 	// medicalHistory: string These will be included in the future
 	createdAt: string;
