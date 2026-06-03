@@ -1,8 +1,8 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Pet } from '../types/pet';
-import BackButton from './BackButton';
 import PetForm from './PetForm';
+import PageHeader from './PageHeader';
 
 interface EditPetFormProps {
 	pets: Pet[];
@@ -30,7 +30,12 @@ export default function EditPetForm({ pets, onUpdatePet }: EditPetFormProps) {
 
 	return (
 		<FormView>
-			<BackButton to={`/pets/${pet.id}`} label="Back to pet details" />
+			<PageHeader
+				to={`/pets/${pet.id}`}
+				label="Back to pet details"
+				title={`Edit ${pet.name}`}
+			/>
+
 			<PetForm pet={pet} submitLabel="Save changes" onSubmit={handleSubmit} />
 		</FormView>
 	);
@@ -53,5 +58,4 @@ const FormView = styled.section({
 	maxWidth: '720px',
 	boxSizing: 'border-box',
 	justifyItems: 'center',
-	padding: '24px',
 });

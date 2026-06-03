@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Pet } from '../types/pet';
-import BackButton from './BackButton';
 import PetForm from './PetForm';
+import { spacings } from '../styles/spacings';
+import PageHeader from './PageHeader';
 
 interface AddPetFormProps {
 	onAddPet: (pet: Pet) => Promise<void>;
@@ -18,7 +19,8 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 
 	return (
 		<FormView>
-			<BackButton to="/" label="Back to pets overview" />
+			<PageHeader to="/" label="Back to pets overview" title="Add your pet" />
+
 			<PetForm submitLabel="Add pet" onSubmit={handleSubmit} />
 		</FormView>
 	);
@@ -26,10 +28,9 @@ export default function AddPetForm({ onAddPet }: AddPetFormProps) {
 
 const FormView = styled.section({
 	display: 'grid',
-	gap: '16px',
+	gap: spacings.x2,
 	width: '100%',
 	maxWidth: '720px',
 	boxSizing: 'border-box',
 	justifyItems: 'center',
-	padding: '24px',
 });
