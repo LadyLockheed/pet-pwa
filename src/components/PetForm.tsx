@@ -15,56 +15,61 @@ import { spacings } from '../styles/spacings';
 import { colors } from '../styles/colors';
 import { typography } from '../styles/typography';
 import CollapsibleSection from './CollapsibleSection';
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
 const MAX_IMAGE_SIZE = 1024;
 const IMAGE_QUALITY = 0.8;
 const MAX_ORIGINAL_FILE_SIZE = 25 * 1024 * 1024;
-const emptyHeatCycle: HeatCycle = {};
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface PetFormProps {
 	pet?: Pet;
 	submitLabel: string;
 	onSubmit: (pet: Pet) => Promise<void>;
 }
-//TODO ska man flytta allt detta nån annanstans?
-// TODO se över där den satt ett defaultvärde, tex om man inte valt species, så sätter den dog som default, fel.
 
-// TODO Validation, tex föredatum får inte vara efter sista datum för heat
+interface FormState {
+	// Basic information
+	name: string;
+	breed: string;
+	species: PetSpecies;
+	sex: PetSex;
+	dateOfBirth: string;
+	dateOfArrival: string;
+	pictureUrl: string | undefined;
+	// Measurements
+	height: string;
+	backLength: string;
+	neckCircumference: string;
+	chestCircumference: string;
+	// Health
+	weight: string;
+	latestVaccinationDate: string;
+	// Breeder information
+	breederName: string;
+	registeredName: string;
+	skkHunddataUrl: string;
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
-	const [name, setName] = useState(pet?.name ?? '');
-	const [breed, setBreed] = useState(pet?.breed ?? '');
-	const [species, setSpecies] = useState<PetSpecies>(
-		pet?.species ?? petType.dog,
-	);
-	const [sex, setSex] = useState<PetSex>(pet?.sex ?? 'female');
-	const [dateOfBirth, setDateOfBirth] = useState(pet?.dateOfBirth ?? '');
-	const [pictureUrl, setPictureUrl] = useState<string | undefined>(
-		pet?.pictureUrl,
-	);
-	const [height, setHeight] = useState(
-		pet?.measurements?.height?.toString() ?? '',
-	);
-	const [backLength, setBackLength] = useState(
-		pet?.measurements?.backLength?.toString() ?? '',
-	);
-	const [neckCircumference, setNeckCircumference] = useState(
-		pet?.measurements?.neckCircumference?.toString() ?? '',
-	);
-	const [weight, setWeight] = useState(pet?.health?.weight?.toString() ?? '');
-	const [latestVaccinationDate, setLatestVaccinationDate] = useState(
-		pet?.health?.latestVaccinationDate ?? '',
-	);
-	const [heatCycles, setHeatCycles] = useState<HeatCycle[]>(
-		getInitialHeatCycles(pet),
-	);
-	const [breederName, setBreederName] = useState(
-		pet?.breederInfo?.breederName ?? '',
-	);
-	const [skkHunddataUrl, setSkkHunddataUrl] = useState(
-		pet?.breederInfo?.skkHunddataUrl ?? '',
-	);
+	// State
+	const [form, setForm] = useState<FormState>(getInitialFormState(pet));
+	const [heatCycles, setHeatCycles] = useState<HeatCycle[]>(getInitialHeatCycles(pet));
 	const [pictureError, setPictureError] = useState('');
 	const [isProcessingPicture, setIsProcessingPicture] = useState(false);
 
+	const today = new Date().toISOString().split('T')[0];
+
+	// Helpers
+	function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
+		setForm((f) => ({ ...f, [key]: value }));
+	}
+
+	// Submit handler
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
@@ -76,12 +81,13 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 		await onSubmit({
 			id: pet?.id ?? crypto.randomUUID(),
-			name: name.trim(),
-			sex,
-			species,
-			breed: breed.trim(),
-			dateOfBirth,
-			pictureUrl,
+			name: form.name.trim(),
+			sex: form.sex,
+			species: form.species,
+			breed: form.breed.trim(),
+			dateOfBirth: form.dateOfBirth,
+			...(form.dateOfArrival ? { dateOfArrival: form.dateOfArrival } : {}),
+			pictureUrl: form.pictureUrl,
 			...(measurements ? { measurements } : {}),
 			...(health ? { health } : {}),
 			...(savedHeatCycles ? { heatCycles: savedHeatCycles } : {}),
@@ -91,29 +97,27 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 		});
 	}
 
+	// Form data builders
 	function getMeasurements(): PetMeasurements | undefined {
 		const measurements: PetMeasurements = {};
-		if (height) measurements.height = Number(height);
-		if (backLength) measurements.backLength = Number(backLength);
-		if (neckCircumference)
-			measurements.neckCircumference = Number(neckCircumference);
+		if (form.height) measurements.height = Number(form.height);
+		if (form.backLength) measurements.backLength = Number(form.backLength);
+		if (form.neckCircumference) measurements.neckCircumference = Number(form.neckCircumference);
+		if (form.chestCircumference) measurements.chestCircumference = Number(form.chestCircumference);
 		return pickDefined(measurements);
 	}
 
 	function getHealth(): PetHealth | undefined {
 		const health: PetHealth = {};
-		if (latestVaccinationDate)
-			health.latestVaccinationDate = latestVaccinationDate;
-		if (weight) health.weight = Number(weight);
+		if (form.latestVaccinationDate) health.latestVaccinationDate = form.latestVaccinationDate;
+		if (form.weight) health.weight = Number(form.weight);
 		return pickDefined(health);
 	}
 
 	function getHeatCycles(): HeatCycle[] | undefined {
-		if (sex !== 'female') {
-			return undefined;
-		}
+		if (form.sex !== 'female') return undefined;
 
-		const savedHeatCycles = heatCycles
+		const saved = heatCycles
 			.filter((heatCycle) => heatCycle.startDate)
 			.map((heatCycle) => ({
 				startDate: heatCycle.startDate,
@@ -126,65 +130,49 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 					: {}),
 			}));
 
-		return savedHeatCycles.length > 0 ? savedHeatCycles : undefined;
+		return saved.length > 0 ? saved : undefined;
 	}
 
-	function updateHeatCycle(
-		index: number,
-		field: keyof HeatCycle,
-		value: string,
-	) {
-		setHeatCycles((currentHeatCycles) =>
-			currentHeatCycles.map((heatCycle, heatCycleIndex) =>
-				heatCycleIndex === index
-					? {
-							...heatCycle,
-							[field]: value,
-						}
-					: heatCycle,
+	function getBreederInfo(): PetBreederInfo | undefined {
+		const breederInfo: PetBreederInfo = {};
+		const name = form.breederName.trim();
+		const registeredName = form.registeredName.trim();
+		const url = form.skkHunddataUrl.trim();
+		if (name) breederInfo.breederName = name;
+		if (registeredName) breederInfo.registeredName = registeredName;
+		if (url) breederInfo.skkHunddataUrl = url;
+		return pickDefined(breederInfo);
+	}
+
+	// Heat cycle handlers
+	function updateHeatCycle(index: number, field: keyof HeatCycle, value: string) {
+		setHeatCycles((current) =>
+			current.map((heatCycle, i) =>
+				i === index ? { ...heatCycle, [field]: value } : heatCycle,
 			),
 		);
 	}
 
 	function addHeatCycle() {
-		setHeatCycles((currentHeatCycles) => [
-			...currentHeatCycles,
-			{ ...emptyHeatCycle },
-		]);
+		setHeatCycles((current) => [...current, {}]);
 	}
 
 	function removeHeatCycle(index: number) {
-		setHeatCycles((currentHeatCycles) => {
-			const nextHeatCycles = currentHeatCycles.filter(
-				(_, heatCycleIndex) => heatCycleIndex !== index,
-			);
-
-			return nextHeatCycles.length > 0
-				? nextHeatCycles
-				: [{ ...emptyHeatCycle }];
+		setHeatCycles((current) => {
+			const next = current.filter((_, i) => i !== index);
+			return next.length > 0 ? next : [{}];
 		});
 	}
 
-	function getBreederInfo(): PetBreederInfo | undefined {
-		const breederInfo: PetBreederInfo = {};
-		if (breederName.trim()) breederInfo.breederName = breederName.trim();
-		if (skkHunddataUrl.trim())
-			breederInfo.skkHunddataUrl = skkHunddataUrl.trim();
-		return pickDefined(breederInfo);
-	}
-
-	async function handlePictureChange(
-		event: React.ChangeEvent<HTMLInputElement>,
-	) {
+	// Picture handlers
+	async function handlePictureChange(event: React.ChangeEvent<HTMLInputElement>) {
 		const file = event.target.files?.[0];
 		setPictureError('');
 
-		if (!file) {
-			return;
-		}
+		if (!file) return;
 
 		if (file.size > MAX_ORIGINAL_FILE_SIZE) {
-			setPictureUrl(undefined);
+			setField('pictureUrl', undefined);
 			setPictureError('Choose a smaller picture.');
 			return;
 		}
@@ -193,59 +181,26 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 		try {
 			const resizedPicture = await resizeImage(file);
-
-			setPictureUrl(resizedPicture);
+			setField('pictureUrl', resizedPicture);
 		} catch {
-			setPictureUrl(undefined);
+			setField('pictureUrl', undefined);
 			setPictureError('Could not use that picture. Try another one.');
 		} finally {
 			setIsProcessingPicture(false);
 		}
 	}
 
-	function resizeImage(file: File): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const image = new Image();
-			const imageUrl = URL.createObjectURL(file);
-
-			image.onload = () => {
-				URL.revokeObjectURL(imageUrl);
-
-				const scale = Math.min(
-					1,
-					MAX_IMAGE_SIZE / Math.max(image.width, image.height),
-				);
-				const canvas = document.createElement('canvas');
-				canvas.width = Math.round(image.width * scale);
-				canvas.height = Math.round(image.height * scale);
-
-				const context = canvas.getContext('2d');
-
-				if (!context) {
-					reject();
-					return;
-				}
-
-				context.drawImage(image, 0, 0, canvas.width, canvas.height);
-				resolve(canvas.toDataURL('image/jpeg', IMAGE_QUALITY));
-			};
-
-			image.onerror = () => {
-				URL.revokeObjectURL(imageUrl);
-				reject();
-			};
-
-			image.src = imageUrl;
-		});
-	}
+	// ─── JSX ─────────────────────────────────────────────────────────────────
 
 	return (
 		<Form onSubmit={handleSubmit}>
+
+			{/* Picture */}
 			<ImageField>
 				<span>Pet image</span>
 				<ImageUploadTile>
-					{pictureUrl ? (
-						<PicturePreview src={pictureUrl} alt="Selected pet preview" />
+					{form.pictureUrl ? (
+						<PicturePreview src={form.pictureUrl} alt="Selected pet preview" />
 					) : (
 						<>
 							<ImagePlus size={22} />
@@ -256,19 +211,17 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				</ImageUploadTile>
 			</ImageField>
 
-			{isProcessingPicture ? (
-				<PictureStatus>Preparing picture...</PictureStatus>
-			) : null}
-
+			{isProcessingPicture ? <PictureStatus>Preparing picture...</PictureStatus> : null}
 			{pictureError ? <ErrorMessage>{pictureError}</ErrorMessage> : null}
 
+			{/* Basic information */}
 			<Field>
 				<span>Name</span>
 				<input
 					type="text"
-					value={name}
+					value={form.name}
 					required
-					onChange={(event) => setName(event.target.value)}
+					onChange={(event) => setField('name', event.target.value)}
 				/>
 			</Field>
 
@@ -276,9 +229,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				<span>Breed</span>
 				<input
 					type="text"
-					value={breed}
+					value={form.breed}
 					required
-					onChange={(event) => setBreed(event.target.value)}
+					onChange={(event) => setField('breed', event.target.value)}
 				/>
 			</Field>
 
@@ -290,8 +243,8 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						name="sex"
 						value="female"
 						required
-						checked={sex === 'female'}
-						onChange={() => setSex('female')}
+						checked={form.sex === 'female'}
+						onChange={() => setField('sex', 'female')}
 					/>
 					Female
 				</RadioOption>
@@ -300,8 +253,8 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						type="radio"
 						name="sex"
 						value="male"
-						checked={sex === 'male'}
-						onChange={() => setSex('male')}
+						checked={form.sex === 'male'}
+						onChange={() => setField('sex', 'male')}
 					/>
 					Male
 				</RadioOption>
@@ -315,8 +268,8 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 							type="radio"
 							name="species"
 							value={petType.dog}
-							checked={species === petType.dog}
-							onChange={() => setSpecies(petType.dog)}
+							checked={form.species === petType.dog}
+							onChange={() => setField('species', petType.dog)}
 						/>
 						Dog
 					</RadioOption>
@@ -325,8 +278,8 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 							type="radio"
 							name="species"
 							value={petType.cat}
-							checked={species === petType.cat}
-							onChange={() => setSpecies(petType.cat)}
+							checked={form.species === petType.cat}
+							onChange={() => setField('species', petType.cat)}
 						/>
 						Cat
 					</RadioOption>
@@ -337,72 +290,99 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				<span>Date of birth</span>
 				<input
 					type="date"
-					max={new Date().toISOString().split('T')[0]}
-					value={dateOfBirth}
+					max={today}
+					value={form.dateOfBirth}
 					required
-					onChange={(event) => setDateOfBirth(event.target.value)}
+					onChange={(event) => setField('dateOfBirth', event.target.value)}
 				/>
 			</Field>
 
+			<Field>
+				<span>Moved in together</span>
+				<input
+					type="date"
+					max={today}
+					value={form.dateOfArrival}
+					onChange={(event) => setField('dateOfArrival', event.target.value)}
+				/>
+			</Field>
+
+			{/* Measurements */}
 			<CollapsibleSection
 				title="Measurements"
 				defaultOpen={Boolean(pet?.measurements)}
 			>
-				<Field>
-					<span>Height</span>
-					<input
-						type="number"
-						min="0"
-						inputMode="decimal"
-						value={height}
-						onChange={(event) => setHeight(event.target.value)}
-					/>
-				</Field>
-				<Field>
-					<span>Back length</span>
-					<input
-						type="number"
-						min="0"
-						inputMode="decimal"
-						value={backLength}
-						onChange={(event) => setBackLength(event.target.value)}
-					/>
-				</Field>
-				<Field>
-					<span>Neck circumference</span>
-					<input
-						type="number"
-						min="0"
-						inputMode="decimal"
-						value={neckCircumference}
-						onChange={(event) => setNeckCircumference(event.target.value)}
-					/>
-				</Field>
+				<FieldGroup>
+					<Field>
+						<span>Height</span>
+						<input
+							type="number"
+							min="0"
+							inputMode="decimal"
+							value={form.height}
+							onChange={(event) => setField('height', event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Back length</span>
+						<input
+							type="number"
+							min="0"
+							inputMode="decimal"
+							value={form.backLength}
+							onChange={(event) => setField('backLength', event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Neck circumference</span>
+						<input
+							type="number"
+							min="0"
+							inputMode="decimal"
+							value={form.neckCircumference}
+							onChange={(event) => setField('neckCircumference', event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Chest circumference</span>
+						<input
+							type="number"
+							min="0"
+							inputMode="decimal"
+							value={form.chestCircumference}
+							onChange={(event) => setField('chestCircumference', event.target.value)}
+						/>
+					</Field>
+				</FieldGroup>
 			</CollapsibleSection>
 
+			{/* Health */}
 			<CollapsibleSection title="Health" defaultOpen={Boolean(pet?.health)}>
-				<Field>
-					<span>Latest vaccination date</span>
-					<input
-						type="date"
-						max={new Date().toISOString().split('T')[0]}
-						value={latestVaccinationDate}
-						onChange={(event) => setLatestVaccinationDate(event.target.value)}
-					/>
-				</Field>
-				<Field>
-					<span>Weight</span>
-					<input
-						type="number"
-						min="0"
-						inputMode="decimal"
-						value={weight}
-						onChange={(event) => setWeight(event.target.value)}
-					/>
-				</Field>
+				<FieldGroup>
+					<Field>
+						<span>Latest vaccination date</span>
+						<input
+							type="date"
+							max={today}
+							value={form.latestVaccinationDate}
+							onChange={(event) => setField('latestVaccinationDate', event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Weight</span>
+						<input
+							type="number"
+							min="0"
+							inputMode="decimal"
+							value={form.weight}
+							onChange={(event) => setField('weight', event.target.value)}
+						/>
+					</Field>
+				</FieldGroup>
 			</CollapsibleSection>
 
-			{sex === 'female' ? (
+			{/* Heat cycles — only shown for female pets */}
+			{form.sex === 'female' ? (
 				<CollapsibleSection
 					title="Heat cycles"
 					defaultOpen={heatCycles.some(hasHeatCycleValue)}
@@ -445,7 +425,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 									/>
 								</Field>
 								<StandingHeatGroup>
-									<StandingHeatLabel>Standing heat <OptionalTag>(optional)</OptionalTag></StandingHeatLabel>
+									<StandingHeatLabel>
+										Standing heat <OptionalTag>(optional)</OptionalTag>
+									</StandingHeatLabel>
 									<Field>
 										<span>Start</span>
 										<input
@@ -453,11 +435,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 											value={heatCycle.standingHeatStartDate ?? ''}
 											required={Boolean(heatCycle.standingHeatEndDate)}
 											onChange={(event) =>
-												updateHeatCycle(
-													index,
-													'standingHeatStartDate',
-													event.target.value,
-												)
+												updateHeatCycle(index, 'standingHeatStartDate', event.target.value)
 											}
 										/>
 									</Field>
@@ -469,11 +447,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 											required={Boolean(heatCycle.standingHeatStartDate)}
 											min={heatCycle.standingHeatStartDate || undefined}
 											onChange={(event) =>
-												updateHeatCycle(
-													index,
-													'standingHeatEndDate',
-													event.target.value,
-												)
+												updateHeatCycle(index, 'standingHeatEndDate', event.target.value)
 											}
 										/>
 									</Field>
@@ -487,26 +461,37 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				</CollapsibleSection>
 			) : null}
 
+			{/* Breeder information */}
 			<CollapsibleSection
 				title="Breeder information"
 				defaultOpen={Boolean(pet?.breederInfo)}
 			>
-				<Field>
-					<span>Breeder name</span>
-					<input
-						type="text"
-						value={breederName}
-						onChange={(event) => setBreederName(event.target.value)}
-					/>
-				</Field>
-				<Field>
-					<span>SKK Hunddata link</span>
-					<input
-						type="url"
-						value={skkHunddataUrl}
-						onChange={(event) => setSkkHunddataUrl(event.target.value)}
-					/>
-				</Field>
+				<FieldGroup>
+					<Field>
+						<span>Breeder name</span>
+						<input
+							type="text"
+							value={form.breederName}
+							onChange={(event) => setField('breederName', event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>Registered name</span>
+						<input
+							type="text"
+							value={form.registeredName}
+							onChange={(event) => setField('registeredName', event.target.value)}
+						/>
+					</Field>
+					<Field>
+						<span>SKK Hunddata link</span>
+						<input
+							type="url"
+							value={form.skkHunddataUrl}
+							onChange={(event) => setField('skkHunddataUrl', event.target.value)}
+						/>
+					</Field>
+				</FieldGroup>
 			</CollapsibleSection>
 
 			<SubmitButton type="submit" disabled={isProcessingPicture}>
@@ -516,18 +501,74 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 	);
 }
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
 function pickDefined<T extends object>(obj: T): T | undefined {
 	return Object.keys(obj).length > 0 ? obj : undefined;
 }
 
-function getInitialHeatCycles(pet?: Pet) {
-	const heatCycles = pet?.heatCycles;
+function resizeImage(file: File): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const image = new Image();
+		const imageUrl = URL.createObjectURL(file);
 
-	if (heatCycles && heatCycles.length > 0) {
-		return heatCycles;
-	}
+		image.onload = () => {
+			URL.revokeObjectURL(imageUrl);
 
-	return [{ ...emptyHeatCycle }];
+			const scale = Math.min(1, MAX_IMAGE_SIZE / Math.max(image.width, image.height));
+			const canvas = document.createElement('canvas');
+			canvas.width = Math.round(image.width * scale);
+			canvas.height = Math.round(image.height * scale);
+
+			const context = canvas.getContext('2d');
+
+			if (!context) {
+				reject();
+				return;
+			}
+
+			context.drawImage(image, 0, 0, canvas.width, canvas.height);
+			resolve(canvas.toDataURL('image/jpeg', IMAGE_QUALITY));
+		};
+
+		image.onerror = () => {
+			URL.revokeObjectURL(imageUrl);
+			reject();
+		};
+
+		image.src = imageUrl;
+	});
+}
+
+// ─── Initial state ───────────────────────────────────────────────────────────
+
+function getInitialFormState(pet?: Pet): FormState {
+	return {
+		// Basic information
+		name: pet?.name ?? '',
+		breed: pet?.breed ?? '',
+		species: pet?.species ?? petType.dog,
+		sex: pet?.sex ?? 'female',
+		dateOfBirth: pet?.dateOfBirth ?? '',
+		dateOfArrival: pet?.dateOfArrival ?? '',
+		pictureUrl: pet?.pictureUrl,
+		// Measurements
+		height: pet?.measurements?.height?.toString() ?? '',
+		backLength: pet?.measurements?.backLength?.toString() ?? '',
+		neckCircumference: pet?.measurements?.neckCircumference?.toString() ?? '',
+		chestCircumference: pet?.measurements?.chestCircumference?.toString() ?? '',
+		// Health
+		weight: pet?.health?.weight?.toString() ?? '',
+		latestVaccinationDate: pet?.health?.latestVaccinationDate ?? '',
+		// Breeder information
+		breederName: pet?.breederInfo?.breederName ?? '',
+		registeredName: pet?.breederInfo?.registeredName ?? '',
+		skkHunddataUrl: pet?.breederInfo?.skkHunddataUrl ?? '',
+	};
+}
+
+function getInitialHeatCycles(pet?: Pet): HeatCycle[] {
+	return pet?.heatCycles?.length ? pet.heatCycles : [{}];
 }
 
 function hasHeatCycleValue(heatCycle: HeatCycle) {
@@ -539,6 +580,8 @@ function hasHeatCycleValue(heatCycle: HeatCycle) {
 	);
 }
 
+// ─── Styled components ───────────────────────────────────────────────────────
+
 const Form = styled.form({
 	display: 'grid',
 	gap: spacings.x4,
@@ -549,6 +592,12 @@ const Form = styled.form({
 	backgroundColor: colors.white,
 	padding: spacings.x4,
 	border: `1px solid ${colors.blackBrown}`,
+});
+
+const FieldGroup = styled.div({
+	display: 'flex',
+	flexDirection: 'column',
+	gap: spacings.x4,
 });
 
 const Field = styled.label({
@@ -686,12 +735,13 @@ const OptionalTag = styled.span({
 
 const AddButton = styled.button({
 	justifySelf: 'start',
-	border: `1px solid ${colors.darkBeige}`,
+	border: `1px solid ${colors.warmBrown}`,
 	borderRadius: '4px',
 	backgroundColor: colors.white,
 	color: colors.warmBrown,
 	cursor: 'pointer',
 	font: 'inherit',
+	fontSize: '12px',
 	fontWeight: 700,
 	padding: `${spacings.x2} ${spacings.x3}`,
 });
@@ -737,6 +787,7 @@ const SubmitButton = styled.button({
 	font: 'inherit',
 	fontWeight: 800,
 	padding: '12px 16px',
+	marginTop: spacings.x6,
 	'&:disabled': {
 		cursor: 'not-allowed',
 		opacity: 0.7,
