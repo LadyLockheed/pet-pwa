@@ -158,8 +158,7 @@ function getTimelineSegments(heatCycle: HeatCycle) {
 	const startDate = parseDate(heatCycle.startDate);
 	const endDate = parseDate(heatCycle.endDate) ?? startDate;
 	const standingHeatStartDate = parseDate(heatCycle.standingHeatStartDate);
-	const standingHeatEndDate =
-		parseDate(heatCycle.standingHeatEndDate) ?? standingHeatStartDate;
+	const standingHeatEndDate = parseDate(heatCycle.standingHeatEndDate);
 	const dateRange = formatDateRange(heatCycle.startDate, heatCycle.endDate);
 	const standingHeatDateRange = formatDateRange(
 		heatCycle.standingHeatStartDate,
