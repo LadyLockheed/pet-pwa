@@ -40,7 +40,6 @@ export default function CollapsibleSection({
 const Section = styled.details({
 	position: 'relative',
 	width: '100%',
-	paddingTop: spacings.x4,
 	'& summary': {
 		cursor: 'pointer',
 		display: 'flex',
@@ -79,7 +78,6 @@ const SectionLine = styled.span({
 
 const SectionContent = styled.div({
 	display: 'grid',
-	gap: spacings.x4,
 	marginTop: spacings.x3,
 	borderRadius: '8px',
 });
