@@ -119,72 +119,80 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 						</ActionBar>
 					</Header>
 
-					<SectionTitle>Basic information</SectionTitle>
-					<ValuesGrid>
-						{petDetails.map(([label, value]) => (
-							<Values key={label}>
-								<Label>{label}</Label>
-								<Value>{value}</Value>
-							</Values>
-						))}
-					</ValuesGrid>
+					<InnerDetailsContent
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: spacings.x6,
+						}}
+					>
+						<SectionTitle>Basic information</SectionTitle>
+						<ValuesGrid>
+							{petDetails.map(([label, value]) => (
+								<Values key={label}>
+									<Label>{label}</Label>
+									<Value>{value}</Value>
+								</Values>
+							))}
+						</ValuesGrid>
 
-					{measurementDetails.length > 0 ? (
-						<DetailsCollapsibleSection title="Measurements">
-							<ValuesGrid>
-								{measurementDetails.map(([label, value]) => (
-									<Values key={label}>
-										<Label>{label}</Label>
-										<Value>{value}</Value>
-									</Values>
-								))}
-							</ValuesGrid>
-						</DetailsCollapsibleSection>
-					) : null}
+						{measurementDetails.length > 0 ? (
+							<DetailsCollapsibleSection title="Measurements">
+								<ValuesGrid>
+									{measurementDetails.map(([label, value]) => (
+										<Values key={label}>
+											<Label>{label}</Label>
+											<Value>{value}</Value>
+										</Values>
+									))}
+								</ValuesGrid>
+							</DetailsCollapsibleSection>
+						) : null}
 
-					{healthDetails.length > 0 ? (
-						<DetailsCollapsibleSection title="Health">
-							<ValuesGrid>
-								{healthDetails.map(([label, value]) => (
-									<Values key={label}>
-										<Label>{label}</Label>
-										<Value>{value}</Value>
-									</Values>
-								))}
-							</ValuesGrid>
-						</DetailsCollapsibleSection>
-					) : null}
+						{healthDetails.length > 0 ? (
+							<DetailsCollapsibleSection title="Health">
+								<ValuesGrid>
+									{healthDetails.map(([label, value]) => (
+										<Values key={label}>
+											<Label>{label}</Label>
+											<Value>{value}</Value>
+										</Values>
+									))}
+								</ValuesGrid>
+							</DetailsCollapsibleSection>
+						) : null}
 
-					{pet.sex === 'female' && heatCycles.length > 0 ? (
-						<DetailsCollapsibleSection title="Heat cycles">
-							<HeatCycleTimeline heatCycles={heatCycles} />
-						</DetailsCollapsibleSection>
-					) : null}
+						{pet.sex === 'female' && heatCycles.length > 0 ? (
+							<DetailsCollapsibleSection title="Heat cycles">
+								<HeatCycleTimeline heatCycles={heatCycles} />
+							</DetailsCollapsibleSection>
+						) : null}
 
-					{breederDetails.length > 0 ? (
-						<DetailsCollapsibleSection title="Breeder information">
-							<ValuesGrid>
-								{breederDetails.map(([label, value]) => (
-									<Values key={label}>
-										<Label>{label}</Label>
-										<Value>
-											{label === 'SKK Hunddata' ? (
-												<ExternalLink
-													href={value}
-													target="_blank"
-													rel="noreferrer"
-												>
-													Open link
-												</ExternalLink>
-											) : (
-												value
-											)}
-										</Value>
-									</Values>
-								))}
-							</ValuesGrid>
-						</DetailsCollapsibleSection>
-					) : null}
+						{breederDetails.length > 0 ? (
+							<DetailsCollapsibleSection title="Breeder information">
+								<ValuesGrid>
+									{breederDetails.map(([label, value]) => (
+										<Values key={label}>
+											<Label>{label}</Label>
+											<Value>
+												{label === 'SKK Hunddata' ? (
+													<ExternalLink
+														href={value}
+														target="_blank"
+														rel="noreferrer"
+													>
+														Open link
+													</ExternalLink>
+												) : (
+													value
+												)}
+											</Value>
+										</Values>
+									))}
+								</ValuesGrid>
+							</DetailsCollapsibleSection>
+						) : null}
+					</InnerDetailsContent>
 				</InnerDetailsCard>
 			</Details>
 		</>
@@ -223,6 +231,11 @@ const InnerDetailsCard = styled.div({
 	borderRadius: '8px',
 });
 
+const InnerDetailsContent = styled.div({
+	display: 'flex',
+	flexDirection: 'column',
+	gap: spacings.x6,
+});
 const Header = styled.div({
 	display: 'flex',
 	justifyContent: 'space-between',
@@ -238,15 +251,11 @@ const Values = styled.div({
 	display: 'flex',
 	flexDirection: 'column',
 	gap: spacings.x1,
-	// marginBottom: spacings.x3,
-	// backgroundColor: colors.background,
 	paddingBottom: spacings.x3,
-	// borderRadius: '8px',
 });
 
 const Name = styled.h1({
 	color: colors.white,
-	// marginLeft: spacings.x4,
 	margin: 0,
 });
 
@@ -290,7 +299,6 @@ const ValuesGrid = styled.section({
 	gridTemplateColumns: '1fr 1fr',
 	gap: spacings.x2,
 	width: '100%',
-	marginBottom: spacings.x4,
 });
 
 const SectionTitle = styled.h2({
@@ -298,7 +306,6 @@ const SectionTitle = styled.h2({
 	fontSize: '16px',
 	color: colors.orange,
 	textTransform: 'uppercase',
-	marginBottom: spacings.x4,
 });
 
 const DetailsCollapsibleSection = styled(CollapsibleSection)({
