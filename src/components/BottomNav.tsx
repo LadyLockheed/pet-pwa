@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { CirclePlus, Info, PawPrint } from 'lucide-react';
+import { CirclePlus, Info, PawPrint, Settings } from 'lucide-react';
 import { NavLink as RouterNavLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { colors } from '../styles/colors';
@@ -24,6 +24,11 @@ const navItems: Array<{
 		icon: <Info size={20} />,
 		to: '/about',
 	},
+	{
+		label: 'Settings',
+		icon: <Settings size={20} />,
+		to: '/settings',
+	},
 ];
 
 export default function BottomNav() {
@@ -36,7 +41,7 @@ export default function BottomNav() {
 				<ActiveIndicator
 					aria-hidden="true"
 					style={{
-						left: `calc(${activeIndex} * (100% / 3) + ((100% / 3) - 20%) / 2)`,
+						left: `calc(${activeIndex} * (100% / 4) + ((100% / 4) - 20%) / 2)`,
 					}}
 				/>
 				{navItems.map((item) => (
@@ -84,7 +89,7 @@ const Nav = styled.nav({
 const NavInner = styled.div({
 	position: 'relative',
 	display: 'grid',
-	gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+	gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
 	width: '100%',
 	maxWidth: '420px',
 });

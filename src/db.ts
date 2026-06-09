@@ -66,3 +66,10 @@ export async function savePet(pet: Pet): Promise<Pet> {
 export function deletePet(id: string): Promise<undefined> {
 	return withPetStore<undefined>('readwrite', (store) => store.delete(id));
 }
+
+// Saves an array of pets, replacing any existing pet with the same id.
+export async function importPets(pets: Pet[]): Promise<void> {
+	for (const pet of pets) {
+		await savePet(pet);
+	}
+}

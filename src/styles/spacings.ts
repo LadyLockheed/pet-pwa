@@ -6,4 +6,6 @@ export const spacings = {
 	x4: '16px',
 	x5: '20px',
 	x6: '24px',
+	x7: '28px',
+	x8: '32px',
 };
