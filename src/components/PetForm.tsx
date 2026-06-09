@@ -58,7 +58,9 @@ interface FormState {
 export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 	// State
 	const [form, setForm] = useState<FormState>(getInitialFormState(pet));
-	const [heatCycles, setHeatCycles] = useState<HeatCycle[]>(getInitialHeatCycles(pet));
+	const [heatCycles, setHeatCycles] = useState<HeatCycle[]>(
+		getInitialHeatCycles(pet),
+	);
 	const [pictureError, setPictureError] = useState('');
 	const [isProcessingPicture, setIsProcessingPicture] = useState(false);
 
@@ -102,14 +104,17 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 		const measurements: PetMeasurements = {};
 		if (form.height) measurements.height = Number(form.height);
 		if (form.backLength) measurements.backLength = Number(form.backLength);
-		if (form.neckCircumference) measurements.neckCircumference = Number(form.neckCircumference);
-		if (form.chestCircumference) measurements.chestCircumference = Number(form.chestCircumference);
+		if (form.neckCircumference)
+			measurements.neckCircumference = Number(form.neckCircumference);
+		if (form.chestCircumference)
+			measurements.chestCircumference = Number(form.chestCircumference);
 		return pickDefined(measurements);
 	}
 
 	function getHealth(): PetHealth | undefined {
 		const health: PetHealth = {};
-		if (form.latestVaccinationDate) health.latestVaccinationDate = form.latestVaccinationDate;
+		if (form.latestVaccinationDate)
+			health.latestVaccinationDate = form.latestVaccinationDate;
 		if (form.weight) health.weight = Number(form.weight);
 		return pickDefined(health);
 	}
@@ -145,7 +150,11 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 	}
 
 	// Heat cycle handlers
-	function updateHeatCycle(index: number, field: keyof HeatCycle, value: string) {
+	function updateHeatCycle(
+		index: number,
+		field: keyof HeatCycle,
+		value: string,
+	) {
 		setHeatCycles((current) =>
 			current.map((heatCycle, i) =>
 				i === index ? { ...heatCycle, [field]: value } : heatCycle,
@@ -165,7 +174,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 	}
 
 	// Picture handlers
-	async function handlePictureChange(event: React.ChangeEvent<HTMLInputElement>) {
+	async function handlePictureChange(
+		event: React.ChangeEvent<HTMLInputElement>,
+	) {
 		const file = event.target.files?.[0];
 		setPictureError('');
 
@@ -194,7 +205,6 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 	return (
 		<Form onSubmit={handleSubmit}>
-
 			{/* Picture */}
 			<ImageField>
 				<span>Pet image</span>
@@ -211,7 +221,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				</ImageUploadTile>
 			</ImageField>
 
-			{isProcessingPicture ? <PictureStatus>Preparing picture...</PictureStatus> : null}
+			{isProcessingPicture ? (
+				<PictureStatus>Preparing picture...</PictureStatus>
+			) : null}
 			{pictureError ? <ErrorMessage>{pictureError}</ErrorMessage> : null}
 
 			{/* Basic information */}
@@ -308,10 +320,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			</Field>
 
 			{/* Measurements */}
-			<CollapsibleSection
-				title="Measurements"
-				defaultOpen={Boolean(pet?.measurements)}
-			>
+			<CollapsibleSection title="Measurements">
 				<FieldGroup>
 					<Field>
 						<span>Height</span>
@@ -340,7 +349,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 							min="0"
 							inputMode="decimal"
 							value={form.neckCircumference}
-							onChange={(event) => setField('neckCircumference', event.target.value)}
+							onChange={(event) =>
+								setField('neckCircumference', event.target.value)
+							}
 						/>
 					</Field>
 					<Field>
@@ -350,14 +361,16 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 							min="0"
 							inputMode="decimal"
 							value={form.chestCircumference}
-							onChange={(event) => setField('chestCircumference', event.target.value)}
+							onChange={(event) =>
+								setField('chestCircumference', event.target.value)
+							}
 						/>
 					</Field>
 				</FieldGroup>
 			</CollapsibleSection>
 
 			{/* Health */}
-			<CollapsibleSection title="Health" defaultOpen={Boolean(pet?.health)}>
+			<CollapsibleSection title="Health">
 				<FieldGroup>
 					<Field>
 						<span>Latest vaccination date</span>
@@ -365,7 +378,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 							type="date"
 							max={today}
 							value={form.latestVaccinationDate}
-							onChange={(event) => setField('latestVaccinationDate', event.target.value)}
+							onChange={(event) =>
+								setField('latestVaccinationDate', event.target.value)
+							}
 						/>
 					</Field>
 					<Field>
@@ -383,10 +398,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 			{/* Heat cycles — only shown for female pets */}
 			{form.sex === 'female' ? (
-				<CollapsibleSection
-					title="Heat cycles"
-					defaultOpen={heatCycles.some(hasHeatCycleValue)}
-				>
+				<CollapsibleSection title="Heat cycles">
 					<HeatCycleGroup>
 						{heatCycles.map((heatCycle, index) => (
 							<HeatCycleCard key={index}>
@@ -435,7 +447,11 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 											value={heatCycle.standingHeatStartDate ?? ''}
 											required={Boolean(heatCycle.standingHeatEndDate)}
 											onChange={(event) =>
-												updateHeatCycle(index, 'standingHeatStartDate', event.target.value)
+												updateHeatCycle(
+													index,
+													'standingHeatStartDate',
+													event.target.value,
+												)
 											}
 										/>
 									</Field>
@@ -447,7 +463,11 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 											required={Boolean(heatCycle.standingHeatStartDate)}
 											min={heatCycle.standingHeatStartDate || undefined}
 											onChange={(event) =>
-												updateHeatCycle(index, 'standingHeatEndDate', event.target.value)
+												updateHeatCycle(
+													index,
+													'standingHeatEndDate',
+													event.target.value,
+												)
 											}
 										/>
 									</Field>
@@ -462,10 +482,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			) : null}
 
 			{/* Breeder information */}
-			<CollapsibleSection
-				title="Breeder information"
-				defaultOpen={Boolean(pet?.breederInfo)}
-			>
+			<CollapsibleSection title="Breeder information">
 				<FieldGroup>
 					<Field>
 						<span>Breeder name</span>
@@ -480,7 +497,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						<input
 							type="text"
 							value={form.registeredName}
-							onChange={(event) => setField('registeredName', event.target.value)}
+							onChange={(event) =>
+								setField('registeredName', event.target.value)
+							}
 						/>
 					</Field>
 					<Field>
@@ -488,7 +507,9 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						<input
 							type="url"
 							value={form.skkHunddataUrl}
-							onChange={(event) => setField('skkHunddataUrl', event.target.value)}
+							onChange={(event) =>
+								setField('skkHunddataUrl', event.target.value)
+							}
 						/>
 					</Field>
 				</FieldGroup>
@@ -515,7 +536,10 @@ function resizeImage(file: File): Promise<string> {
 		image.onload = () => {
 			URL.revokeObjectURL(imageUrl);
 
-			const scale = Math.min(1, MAX_IMAGE_SIZE / Math.max(image.width, image.height));
+			const scale = Math.min(
+				1,
+				MAX_IMAGE_SIZE / Math.max(image.width, image.height),
+			);
 			const canvas = document.createElement('canvas');
 			canvas.width = Math.round(image.width * scale);
 			canvas.height = Math.round(image.height * scale);
@@ -569,15 +593,6 @@ function getInitialFormState(pet?: Pet): FormState {
 
 function getInitialHeatCycles(pet?: Pet): HeatCycle[] {
 	return pet?.heatCycles?.length ? pet.heatCycles : [{}];
-}
-
-function hasHeatCycleValue(heatCycle: HeatCycle) {
-	return Boolean(
-		heatCycle.startDate ||
-		heatCycle.endDate ||
-		heatCycle.standingHeatStartDate ||
-		heatCycle.standingHeatEndDate,
-	);
 }
 
 // ─── Styled components ───────────────────────────────────────────────────────
