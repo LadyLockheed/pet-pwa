@@ -1,3 +1,18 @@
+export function isBirthday(dateOfBirth?: string): boolean {
+	if (!dateOfBirth) {
+		return false;
+	}
+	const birth = new Date(`${dateOfBirth}T00:00:00`);
+
+	if (Number.isNaN(birth.getTime())) {
+		return false;
+	}
+	const today = new Date();
+	return (
+		today.getMonth() === birth.getMonth() && today.getDate() === birth.getDate()
+	);
+}
+
 export function formatAgeFromDateOfBirth(dateOfBirth?: string) {
 	if (!dateOfBirth) {
 		return 'Unknown';

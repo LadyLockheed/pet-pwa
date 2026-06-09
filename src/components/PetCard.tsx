@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import { colors } from '../styles/colors';
 import { spacings } from '../styles/spacings';
 import type { Pet } from '../types/pet';
-import { formatAgeFromDateOfBirth } from '../utils/petAge';
+import { formatAgeFromDateOfBirth, isBirthday } from '../utils/petAge';
 import PicturePlaceholder from './PicturePlaceholder';
+import BirthdayBanner from './BirthdayBanner';
 
 interface PetCardProps {
 	pet: Pet;
@@ -14,6 +15,7 @@ interface PetCardProps {
 export default function PetCard({ pet }: PetCardProps) {
 	return (
 		<CardLink to={`/pets/${pet.id}`}>
+			{isBirthday(pet.dateOfBirth) ? <BirthdayBanner petName={pet.name} /> : null}
 			<PetSummary>
 				<TopRow>
 					<Name>{pet.name}</Name>
