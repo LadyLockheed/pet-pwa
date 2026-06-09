@@ -59,6 +59,7 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 		['Breed', pet.breed],
 		['Date of birth', pet.dateOfBirth || 'Unknown'],
 		['Age', formatAgeFromDateOfBirth(pet.dateOfBirth)],
+		...(pet.dateOfArrival ? [['Moved in together', pet.dateOfArrival]] : []),
 	];
 
 	const measurementDetails = [
@@ -67,6 +68,10 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 		[
 			'Neck circumference',
 			formatMeasurement(pet.measurements?.neckCircumference),
+		],
+		[
+			'Chest circumference',
+			formatMeasurement(pet.measurements?.chestCircumference),
 		],
 	].filter(([, value]) => value);
 

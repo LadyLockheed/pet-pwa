@@ -12,6 +12,7 @@ export type PetMeasurements = {
 	height?: number;
 	backLength?: number;
 	neckCircumference?: number;
+	chestCircumference?: number;
 };
 
 export type HeatCycle = {
@@ -28,6 +29,7 @@ export type PetHealth = {
 
 export type PetBreederInfo = {
 	breederName?: string;
+	registeredName?: string;
 	skkHunddataUrl?: string;
 };
 
@@ -39,6 +41,7 @@ export type Pet = {
 	species: PetSpecies;
 	breed: string;
 	dateOfBirth: string;
+	dateOfArrival?: string;
 	pictureUrl?: string;
 	measurements?: PetMeasurements;
 	health?: PetHealth;
