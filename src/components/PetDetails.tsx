@@ -99,7 +99,7 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 					)}
 				</PictureContainer>
 
-				<InnerDetailsCard>
+				<DetailsCard>
 					<Header>
 						<Name>{pet.name}</Name>
 						<ActionBar>
@@ -119,7 +119,7 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 						</ActionBar>
 					</Header>
 
-					<InnerDetailsContent
+					<DetailsCardContent
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
@@ -192,8 +192,8 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 								</ValuesGrid>
 							</DetailsCollapsibleSection>
 						) : null}
-					</InnerDetailsContent>
-				</InnerDetailsCard>
+					</DetailsCardContent>
+				</DetailsCard>
 			</Details>
 		</>
 	);
@@ -225,13 +225,13 @@ const PetPicture = styled.img({
 	objectFit: 'cover',
 });
 
-const InnerDetailsCard = styled.div({
+const DetailsCard = styled.div({
 	backgroundColor: colors.cardBg,
 	padding: spacings.x4,
 	borderRadius: '8px',
 });
 
-const InnerDetailsContent = styled.div({
+const DetailsCardContent = styled.div({
 	display: 'flex',
 	flexDirection: 'column',
 	gap: spacings.x6,
@@ -310,7 +310,7 @@ const SectionTitle = styled.h2({
 
 const DetailsCollapsibleSection = styled(CollapsibleSection)({
 	width: '100%',
-	maxWidth: '420px',
+	// maxWidth: '420px',
 });
 
 const ExternalLink = styled.a({
