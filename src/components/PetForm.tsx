@@ -207,7 +207,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 		<Form onSubmit={handleSubmit}>
 			{/* Picture */}
 			<ImageField>
-				<span>Pet image</span>
+				<Label>Pet image</Label>
 				<ImageUploadTile>
 					{form.pictureUrl ? (
 						<PicturePreview src={form.pictureUrl} alt="Selected pet preview" />
@@ -228,7 +228,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 			{/* Basic information */}
 			<Field>
-				<span>Name</span>
+				<Label>Name</Label>
 				<input
 					type="text"
 					value={form.name}
@@ -238,7 +238,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			</Field>
 
 			<Field>
-				<span>Breed</span>
+				<Label>Breed</Label>
 				<input
 					type="text"
 					value={form.breed}
@@ -299,7 +299,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			</SectionContent>
 
 			<Field>
-				<span>Date of birth</span>
+				<Label>Date of birth</Label>
 				<input
 					type="date"
 					max={today}
@@ -310,7 +310,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			</Field>
 
 			<Field>
-				<span>Moved in together</span>
+				<Label>Moved in together</Label>
 				<input
 					type="date"
 					max={today}
@@ -323,7 +323,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			<CollapsibleSection title="Measurements">
 				<FieldGroup>
 					<Field>
-						<span>Height</span>
+						<Label>Height</Label>
 						<input
 							type="number"
 							min="0"
@@ -333,7 +333,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						/>
 					</Field>
 					<Field>
-						<span>Back length</span>
+						<Label>Back length</Label>
 						<input
 							type="number"
 							min="0"
@@ -343,7 +343,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						/>
 					</Field>
 					<Field>
-						<span>Neck circumference</span>
+						<Label>Neck circumference</Label>
 						<input
 							type="number"
 							min="0"
@@ -355,7 +355,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						/>
 					</Field>
 					<Field>
-						<span>Chest circumference</span>
+						<Label>Chest circumference</Label>
 						<input
 							type="number"
 							min="0"
@@ -373,7 +373,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			<CollapsibleSection title="Health">
 				<FieldGroup>
 					<Field>
-						<span>Latest vaccination date</span>
+						<Label>Latest vaccination date</Label>
 						<input
 							type="date"
 							max={today}
@@ -384,7 +384,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						/>
 					</Field>
 					<Field>
-						<span>Weight</span>
+						<Label>Weight</Label>
 						<input
 							type="number"
 							min="0"
@@ -414,7 +414,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 									) : null}
 								</HeatCycleHeader>
 								<Field>
-									<span>Heat cycle start</span>
+									<Label>Heat cycle start</Label>
 									<input
 										type="date"
 										value={heatCycle.startDate ?? ''}
@@ -425,7 +425,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 									/>
 								</Field>
 								<Field>
-									<span>Heat cycle end</span>
+									<Label>Heat cycle end</Label>
 									<input
 										type="date"
 										value={heatCycle.endDate ?? ''}
@@ -456,7 +456,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 										/>
 									</Field>
 									<Field>
-										<span>End</span>
+										<Label>End</Label>
 										<input
 											type="date"
 											value={heatCycle.standingHeatEndDate ?? ''}
@@ -485,7 +485,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			<CollapsibleSection title="Breeder information">
 				<FieldGroup>
 					<Field>
-						<span>Breeder name</span>
+						<Label>Breeder name</Label>
 						<input
 							type="text"
 							value={form.breederName}
@@ -493,7 +493,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						/>
 					</Field>
 					<Field>
-						<span>Registered name</span>
+						<Label>Registered name</Label>
 						<input
 							type="text"
 							value={form.registeredName}
@@ -503,7 +503,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 						/>
 					</Field>
 					<Field>
-						<span>SKK Hunddata link</span>
+						<Label>SKK Hunddata link</Label>
 						<input
 							type="url"
 							value={form.skkHunddataUrl}
@@ -615,13 +615,16 @@ const FieldGroup = styled.div({
 	gap: spacings.x4,
 });
 
+const Label = styled.span({
+	...typography.body,
+	fontWeight: 500,
+	color: colors.warmGrey,
+});
+
 const Field = styled.label({
 	display: 'grid',
 	gap: '6px',
-	...typography.body,
-	'& span': {
-		fontWeight: 500,
-	},
+
 	'& input': {
 		boxSizing: 'border-box',
 		width: '100%',
