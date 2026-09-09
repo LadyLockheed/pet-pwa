@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Layout from './components/Layout';
+import ScrollToTop from './components/ScrollToTop';
 import AddPetForm from './components/AddPetForm';
 import EditPetForm from './components/EditPetForm';
 import PetsOverview from './components/PetsOverview';
@@ -71,6 +72,7 @@ function App() {
 
 	return (
 		<BrowserRouter>
+			<ScrollToTop />
 			<Layout>
 				<Routes>
 					<Route path="/" element={<PetsOverview pets={pets} />} />
