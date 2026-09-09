@@ -9,12 +9,6 @@ export default function About() {
 		<Page>
 			<HeroImage src={heroImage} alt="" />
 			<Content>
-				<Title>Good to know</Title>
-				<Body>Lorem ipsum</Body>
-				<Body>
-					Informationen man lägger in om sitt husdjur sparas på telefonen. Tänk
-					därför på att om du byter telefon så försvinner informationen.
-				</Body>
 				<Title>About</Title>
 				<Body>
 					Idén till den här appen dök upp när jag stod hos veterinären och de
@@ -29,9 +23,7 @@ export default function About() {
 					få prova på att bygga en PWA (progressive web app). För er som inte
 					vet vad en PWA är så är det en app man kan använda och ladda ner via
 					en vanlig webbläsare. Man behöver heller inte ladda ner den om man
-					inte vill, man kan använda den i webbläsaren direkt. Informationen man
-					lägger in om sitt husdjur sparas på telefonen. Så det kan vara bra att
-					veta att om man byter telefon försvinner informationen
+					inte vill, man kan använda den i webbläsaren direkt.
 				</Body>
 			</Content>
 		</Page>
@@ -48,7 +40,7 @@ const Page = styled.section({
 
 const HeroImage = styled.img({
 	width: '100%',
-	aspectRatio: '8S / 9',
+	aspectRatio: '8/9',
 	objectFit: 'cover',
 	borderRadius: '8px',
 });
