@@ -15,20 +15,20 @@ interface PetCardProps {
 export default function PetCard({ pet }: PetCardProps) {
 	return (
 		<CardLink to={`/pets/${pet.id}`}>
-			{isBirthday(pet.dateOfBirth) ? <BirthdayBanner petName={pet.name} /> : null}
+			{isBirthday(pet.dateOfBirth) ? (
+				<BirthdayBanner petName={pet.name} />
+			) : null}
 			<PetSummary>
 				<TopRow>
 					<Name>{pet.name}</Name>
 					<SpeciesPill>{pet.species}</SpeciesPill>
 				</TopRow>
-
 				<BottomRow>
 					<Breed>{pet.breed}</Breed>
 					<Separator aria-hidden="true" />
 					<span>{formatAgeFromDateOfBirth(pet.dateOfBirth)}</span>
 				</BottomRow>
 			</PetSummary>
-
 			<ImageContainer>
 				{pet.pictureUrl ? (
 					<PetPicture src={pet.pictureUrl} alt={pet.name} />
@@ -103,7 +103,7 @@ const PetSummary = styled.div({
 const Name = styled.h1({
 	margin: 0,
 	fontFamily: "'Roboto', ui-sans-serif, system-ui, sans-serif",
-	fontSize: '1.5rem',
+	fontSize: '26px',
 	fontWeight: 700,
 	lineHeight: 1.1,
 	color: colors.white,
@@ -114,8 +114,7 @@ const DetailsArrow = styled.div({
 	alignItems: 'center',
 	justifyContent: 'center',
 	gap: spacings.x2,
-	// maxHeight: spacings.x2,
-	padding: `${spacings.x05} ${spacings.x1}`,
+	padding: `${spacings.x2} ${spacings.x1}`,
 	borderRadius: spacings.x1,
 	backgroundColor: colors.orange,
 	color: colors.warmWhite,
@@ -125,9 +124,7 @@ const ImageContainer = styled.div({
 	display: 'flex',
 	flexDirection: 'column',
 	gap: spacings.x1,
-	// justifyItems: 'center',
 	width: '100%',
-	// textAlign: 'center',
 });
 
 const SpeciesPill = styled.div({
@@ -136,6 +133,6 @@ const SpeciesPill = styled.div({
 	textTransform: 'uppercase',
 	border: `1px solid ${colors.coldBrown}`,
 	color: colors.white,
-	fontSize: '10px',
+	fontSize: '16px',
 	padding: spacings.x1,
 });
