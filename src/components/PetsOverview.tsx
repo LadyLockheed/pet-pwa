@@ -34,8 +34,8 @@ export default function PetsOverview({ pets }: PetsOverviewProps) {
 }
 
 const Overview = styled.section({
-	display: 'grid',
-	alignContent: 'start',
+	display: 'flex',
+	flexDirection: 'column',
 	gap: spacings.x4,
 	width: '100%',
 	boxSizing: 'border-box',
@@ -44,6 +44,7 @@ const Overview = styled.section({
 });
 
 const EmptyStateContent = styled.div({
+	flex: 1,
 	display: 'grid',
 	justifyItems: 'center',
 	alignContent: 'center',
