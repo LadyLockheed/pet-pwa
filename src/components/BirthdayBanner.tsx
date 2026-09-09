@@ -17,7 +17,7 @@ export default function BirthDayBanner({ petName }: BirthdayBannerProps) {
 const BannerContainer = styled.div({
 	height: '20px',
 	// width: '100%',
-	backgroundImage: `linear-gradient(to right, ${colors.vibrantOrange}, ${colors.pastellOrange})`,
+	backgroundImage: `linear-gradient(to right, ${colors.darkGreen}, ${colors.darkMint})`,
 	padding: spacings.x2,
 	display: 'flex',
 	alignItems: 'center',
