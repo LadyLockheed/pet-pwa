@@ -15,6 +15,18 @@ import Settings from './components/Settings';
 
 //TODO Lägg till en "INGA PETS ÄNNU" vy
 
+//TODO gruppera saker man kan lägga till i add pet
+// namn, ålder/födelsedag, ras
+// utrustning storlek
+// hälsorelaterat kropp (vaccinering, mediciner, löp)
+// länkar till skk
+// försäkringsbolagsgrejer
+// trix och todos
+
+//TODO
+// styla om pet cards, se inspiration från dribble
+// måste ha en tydligare knapp så man fattar att man kan klicka för att se mer detaljer
+
 function App() {
 	const [pets, setPets] = useState<Pet[]>([]);
 
