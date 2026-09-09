@@ -8,6 +8,7 @@ import { deletePet as deletePetFromDb, getPets, savePet } from './db';
 import About from './components/About';
 import PetDetails from './components/PetDetails';
 import type { Pet } from './types/pet';
+import Settings from './components/Settings';
 
 //TODO byt ut age till födelsedag och visa ålder utifrån den istället
 //TODO Gå igenom alla componetnter och städa upp
@@ -69,14 +70,13 @@ function App() {
 					<Route path="/about" element={<About />} />
 					<Route
 						path="/pets/:petId/edit"
-						element={
-							<EditPetForm pets={pets} onUpdatePet={handleUpdatePet} />
-						}
+						element={<EditPetForm pets={pets} onUpdatePet={handleUpdatePet} />}
 					/>
 					<Route
 						path="/pets/:petId"
 						element={<PetDetails pets={pets} onDeletePet={handleDeletePet} />}
 					/>
+					<Route path="/settings" element={<Settings />} />
 				</Routes>
 			</Layout>
 		</BrowserRouter>
