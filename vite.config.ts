@@ -19,8 +19,8 @@ export default defineConfig({
 				'screenshots/pet-journal-mobile.png',
 			],
 			manifest: {
-				name: 'Pet Journal',
-				short_name: 'Pet Journal',
+				name: 'Tassar & Nosar',
+				short_name: 'Tassar & Nosar',
 				description:
 					'Store dog and cat profiles, health notes, heat periods, and pictures locally.',
 				theme_color: '#2f6f73',
