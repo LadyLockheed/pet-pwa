@@ -249,17 +249,19 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 
 			<Fieldset>
 				<legend>Sex</legend>
-				<RadioOption>
-					<input
-						type="radio"
-						name="sex"
-						value="female"
-						required
-						checked={form.sex === 'female'}
-						onChange={() => setField('sex', 'female')}
-					/>
-					Female
-				</RadioOption>
+				<div>
+					<RadioOption>
+						<input
+							type="radio"
+							name="sex"
+							value="female"
+							required
+							checked={form.sex === 'female'}
+							onChange={() => setField('sex', 'female')}
+						/>
+						Female
+					</RadioOption>
+				</div>
 				<RadioOption>
 					<input
 						type="radio"
@@ -272,31 +274,29 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 				</RadioOption>
 			</Fieldset>
 
-			<SectionContent>
-				<Fieldset>
-					<legend>Species</legend>
-					<RadioOption>
-						<input
-							type="radio"
-							name="species"
-							value={petType.dog}
-							checked={form.species === petType.dog}
-							onChange={() => setField('species', petType.dog)}
-						/>
-						Dog
-					</RadioOption>
-					<RadioOption>
-						<input
-							type="radio"
-							name="species"
-							value={petType.cat}
-							checked={form.species === petType.cat}
-							onChange={() => setField('species', petType.cat)}
-						/>
-						Cat
-					</RadioOption>
-				</Fieldset>
-			</SectionContent>
+			<Fieldset>
+				<legend>Species</legend>
+				<RadioOption>
+					<input
+						type="radio"
+						name="species"
+						value={petType.dog}
+						checked={form.species === petType.dog}
+						onChange={() => setField('species', petType.dog)}
+					/>
+					Dog
+				</RadioOption>
+				<RadioOption>
+					<input
+						type="radio"
+						name="species"
+						value={petType.cat}
+						checked={form.species === petType.cat}
+						onChange={() => setField('species', petType.cat)}
+					/>
+					Cat
+				</RadioOption>
+			</Fieldset>
 
 			<Field>
 				<Label>Date of birth</Label>
@@ -604,9 +604,9 @@ const Form = styled.form({
 	maxWidth: '420px',
 	boxSizing: 'border-box',
 	borderRadius: '4px',
-	backgroundColor: colors.white,
+	backgroundColor: colors.cardBg,
 	padding: spacings.x4,
-	border: `1px solid ${colors.blackBrown}`,
+	border: `1px solid ${colors.coldBrown}`,
 });
 
 const FieldGroup = styled.div({
@@ -629,16 +629,15 @@ const Field = styled.label({
 		boxSizing: 'border-box',
 		width: '100%',
 		minHeight: '36px',
-		border: `1px solid ${colors.darkBeige}`,
+		border: `1px solid ${colors.coldBrown}`,
 		borderRadius: '4px',
-		backgroundColor: '#ffffff',
-		boxShadow: '0 2px 5px rgba(47, 25, 15, 0.12)',
-		color: colors.blackBrown,
+		backgroundColor: colors.lightBeige,
+		color: colors.cardBg,
 		font: 'inherit',
 		padding: `${spacings.x2} ${spacings.x3}`,
 	},
 	'& input:focus': {
-		borderColor: colors.orange,
+		borderColor: colors.vibrantOrange,
 		outline: 'none',
 	},
 	'& input[type="file"]': {
@@ -665,10 +664,10 @@ const ImageUploadTile = styled.label({
 	placeItems: 'center',
 	alignContent: 'center',
 	gap: spacings.x1,
-	border: `1px dashed ${colors.darkBeige}`,
+	border: `1px dashed ${colors.coldBrown}`,
 	borderRadius: '4px',
-	backgroundColor: '#fbf8f4',
-	color: colors.warmBrown,
+	backgroundColor: colors.lightBeige,
+	color: colors.background,
 	cursor: 'pointer',
 	'& input': {
 		position: 'absolute',
@@ -691,24 +690,24 @@ const Fieldset = styled.fieldset({
 		...typography.body,
 		marginBottom: '6px',
 		fontWeight: 500,
+		color: colors.warmGrey,
 	},
 });
 
 const RadioOption = styled.label({
 	display: 'flex',
 	alignItems: 'center',
+	justifyContent: 'center',
 	gap: '6px',
 	...typography.body,
-});
-
-const SectionContent = styled.div({
-	display: 'grid',
-	gap: spacings.x4,
-	marginTop: spacings.x3,
-	border: `1px solid ${colors.darkBeige}`,
-	borderRadius: '4px',
-	backgroundColor: '#fbf8f4',
-	padding: spacings.x3,
+	color: colors.warmWhite,
+	'& input[type="radio"]': {
+		margin: 0,
+		flexShrink: 0,
+	},
+	border: `1px solid ${colors.warmGrey}`,
+	padding: spacings.x2,
+	borderRadius: '25px',
 });
 
 const HeatCycleGroup = styled.div({
@@ -719,7 +718,7 @@ const HeatCycleGroup = styled.div({
 const HeatCycleCard = styled.div({
 	display: 'grid',
 	gap: spacings.x3,
-	border: `1px solid ${colors.darkBeige}`,
+	border: `1px solid ${colors.coldBrown}`,
 	borderRadius: '4px',
 	padding: spacings.x3,
 });
@@ -731,32 +730,34 @@ const HeatCycleHeader = styled.div({
 	gap: spacings.x3,
 	...typography.body,
 	fontWeight: 700,
+	color: colors.warmGrey,
 });
 
 const StandingHeatGroup = styled.div({
 	display: 'grid',
 	gap: spacings.x3,
 	paddingTop: spacings.x2,
-	borderTop: `1px solid ${colors.darkBeige}`,
+	borderTop: `1px solid ${colors.coldBrown}`,
 });
 
 const StandingHeatLabel = styled.span({
 	...typography.body,
 	fontWeight: 700,
+	color: colors.warmGrey,
 });
 
 const OptionalTag = styled.span({
 	...typography.meta,
 	fontWeight: 400,
-	color: colors.warmBrown,
+	color: colors.warmGrey,
 });
 
 const AddButton = styled.button({
 	justifySelf: 'start',
-	border: `1px solid ${colors.warmBrown}`,
+	border: `1px solid ${colors.coldBrown}`,
 	borderRadius: '4px',
-	backgroundColor: colors.white,
-	color: colors.warmBrown,
+	backgroundColor: colors.pageBg,
+	color: colors.warmWhite,
 	cursor: 'pointer',
 	font: 'inherit',
 	fontSize: '12px',
