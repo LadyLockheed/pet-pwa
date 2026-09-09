@@ -35,6 +35,7 @@ export default function PetsOverview({ pets }: PetsOverviewProps) {
 
 const Overview = styled.section({
 	display: 'grid',
+	alignContent: 'start',
 	gap: spacings.x4,
 	width: '100%',
 	boxSizing: 'border-box',
@@ -62,6 +63,6 @@ const Headline = styled.h1({
 	fontFamily: "'EB Garamond', Georgia, serif",
 	fontWeight: 700,
 	color: colors.background,
-	margin: 'auto',
+	margin: 0,
 	marginBottom: spacings.x6,
 });
