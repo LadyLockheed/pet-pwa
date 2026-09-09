@@ -82,8 +82,9 @@ const Nav = styled.nav({
 	display: 'flex',
 	justifyContent: 'center',
 	boxSizing: 'border-box',
-	padding: '20px 20px calc(20px + env(safe-area-inset-bottom))',
+	padding: '15px 15px calc(15px + env(safe-area-inset-bottom))',
 	backgroundColor: colors.pageBg,
+	borderTop: `1px solid ${colors.warmGrey}`,
 });
 
 const NavInner = styled.div({
