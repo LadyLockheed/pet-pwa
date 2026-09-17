@@ -25,6 +25,7 @@ export type HeatCycle = {
 export type PetHealth = {
 	latestVaccinationDate?: string;
 	weight?: number;
+	temperature?: number;
 };
 
 export type PetBreederInfo = {
@@ -50,4 +51,5 @@ export type Pet = {
 	// medicalHistory: string These will be included in the future
 	createdAt: string;
 	updatedAt: string;
+	freeNotes?: string;
 };

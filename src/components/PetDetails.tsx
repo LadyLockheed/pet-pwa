@@ -53,6 +53,10 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 		return value ? `${value} kg` : undefined;
 	}
 
+	function formatTemperature(value?: number) {
+		return value ? `${value} °C` : undefined;
+	}
+
 	const petDetails = [
 		['Species', pet.species],
 		['Sex', pet.sex],
@@ -78,14 +82,19 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 	const healthDetails = [
 		['Latest vaccination', pet.health?.latestVaccinationDate],
 		['Weight', formatWeight(pet.health?.weight)],
+		['Temperature', formatTemperature(pet.health?.temperature)],
 	].filter(([, value]) => value);
 
 	const heatCycles = pet.heatCycles ?? [];
 
+	// Title name, value
 	const breederDetails = [
 		['Breeder', pet.breederInfo?.breederName],
+		['Registered name', pet.breederInfo?.registeredName],
 		['SKK Hunddata', pet.breederInfo?.skkHunddataUrl],
 	].filter(([, value]) => value);
+
+	const notes = [['Notes', pet.freeNotes]].filter(([, value]) => value);
 
 	return (
 		<>
@@ -135,7 +144,6 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 								</Values>
 							))}
 						</ValuesGrid>
-
 						{measurementDetails.length > 0 ? (
 							<DetailsCollapsibleSection title="Measurements">
 								<ValuesGrid>
@@ -148,7 +156,6 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 								</ValuesGrid>
 							</DetailsCollapsibleSection>
 						) : null}
-
 						{healthDetails.length > 0 ? (
 							<DetailsCollapsibleSection title="Health">
 								<ValuesGrid>
@@ -161,13 +168,11 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 								</ValuesGrid>
 							</DetailsCollapsibleSection>
 						) : null}
-
 						{pet.sex === 'female' && heatCycles.length > 0 ? (
 							<DetailsCollapsibleSection title="Heat cycles">
 								<HeatCycleTimeline heatCycles={heatCycles} />
 							</DetailsCollapsibleSection>
 						) : null}
-
 						{breederDetails.length > 0 ? (
 							<DetailsCollapsibleSection title="Breeder information">
 								<ValuesGrid>
@@ -191,6 +196,17 @@ export default function PetDetails({ pets, onDeletePet }: PetDetailsProps) {
 									))}
 								</ValuesGrid>
 							</DetailsCollapsibleSection>
+						) : null}
+
+						{notes.length > 0 ? (
+							<div>
+								{notes.map(([label, value]) => (
+									<Values key={label}>
+										<Label>{label}</Label>
+										<Value>{value}</Value>
+									</Values>
+								))}
+							</div>
 						) : null}
 					</DetailsCardContent>
 				</DetailsCard>

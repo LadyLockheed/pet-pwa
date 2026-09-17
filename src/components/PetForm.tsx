@@ -47,10 +47,13 @@ interface FormState {
 	// Health
 	weight: string;
 	latestVaccinationDate: string;
+	temperature: string;
 	// Breeder information
 	breederName: string;
 	registeredName: string;
 	skkHunddataUrl: string;
+	//Other
+	freeNotes: string;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -94,6 +97,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 			...(health ? { health } : {}),
 			...(savedHeatCycles ? { heatCycles: savedHeatCycles } : {}),
 			...(breederInfo ? { breederInfo } : {}),
+			freeNotes: form.freeNotes,
 			createdAt: pet?.createdAt ?? now,
 			updatedAt: now,
 		});
@@ -116,6 +120,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 		if (form.latestVaccinationDate)
 			health.latestVaccinationDate = form.latestVaccinationDate;
 		if (form.weight) health.weight = Number(form.weight);
+		if (form.temperature) health.temperature = Number(form.temperature);
 		return pickDefined(health);
 	}
 
@@ -393,6 +398,17 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 							onChange={(event) => setField('weight', event.target.value)}
 						/>
 					</Field>
+					<Field>
+						<Label>Temperature</Label>
+						<input
+							type="number"
+							min="0"
+							step="0.1"
+							inputMode="decimal"
+							value={form.temperature}
+							onChange={(event) => setField('temperature', event.target.value)}
+						/>
+					</Field>
 				</FieldGroup>
 			</CollapsibleSection>
 
@@ -441,7 +457,7 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 										Standing heat <OptionalTag>(optional)</OptionalTag>
 									</StandingHeatLabel>
 									<Field>
-										<span>Start</span>
+										<Label>Start</Label>
 										<input
 											type="date"
 											value={heatCycle.standingHeatStartDate ?? ''}
@@ -514,6 +530,14 @@ export default function PetForm({ pet, submitLabel, onSubmit }: PetFormProps) {
 					</Field>
 				</FieldGroup>
 			</CollapsibleSection>
+			<Field>
+				<Label>Notes</Label>
+				<input
+					type="string"
+					value={form.freeNotes}
+					onChange={(event) => setField('freeNotes', event.target.value)}
+				/>
+			</Field>
 
 			<SubmitButton type="submit" disabled={isProcessingPicture}>
 				{submitLabel}
@@ -584,10 +608,12 @@ function getInitialFormState(pet?: Pet): FormState {
 		// Health
 		weight: pet?.health?.weight?.toString() ?? '',
 		latestVaccinationDate: pet?.health?.latestVaccinationDate ?? '',
+		temperature: pet?.health?.temperature?.toString() ?? '',
 		// Breeder information
 		breederName: pet?.breederInfo?.breederName ?? '',
 		registeredName: pet?.breederInfo?.registeredName ?? '',
 		skkHunddataUrl: pet?.breederInfo?.skkHunddataUrl ?? '',
+		freeNotes: pet?.freeNotes ?? '',
 	};
 }
 
